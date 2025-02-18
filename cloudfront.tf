@@ -83,7 +83,7 @@ resource "aws_cloudfront_distribution" "tileserver" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn            = module.tileserver_ssl.arn
+    acm_certificate_arn            = var.create_ssl_cert ? module.tileserver_ssl[0].arn : var.tileserver_acm_cert_arn
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
   }
@@ -92,6 +92,7 @@ resource "aws_cloudfront_distribution" "tileserver" {
 }
 
 resource "aws_route53_record" "tileserver" {
+  count           = var.create_tileserver_dns_record ? 1 : 0
   name            = var.tileserver_domain_name
   type            = "A"
   zone_id         = var.hosted_zone_id
