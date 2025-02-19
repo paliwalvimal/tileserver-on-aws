@@ -9,6 +9,78 @@ variable "env" {
   description = "Environment name: dev, qa, uat, staging, production"
 }
 
+variable "create_cloudfront_function" {
+  type        = bool
+  default     = true
+  description = "Whether to associate CloudFront Function to the distribution"
+}
+
+variable "cors_origin_domain" {
+  type        = string
+  default     = "*"
+  description = "Domain name to use for setting CORS `access-control-allow-origin` header"
+}
+
+variable "cloudfront_price_class" {
+  type        = string
+  default     = "PriceClass_All"
+  description = "Price class to use for CloudFront distribution"
+}
+
+variable "cloudfront_http_version" {
+  type        = string
+  default     = "http2"
+  description = "HTTP version to use for CloudFront distribution"
+}
+
+variable "cloudfront_cache_policy_id" {
+  type        = string
+  default     = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
+  description = "ID of cache policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html"
+}
+
+variable "cloudfront_origin_request_policy_id" {
+  type        = string
+  default     = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # Managed-AllViewerExceptHostHeader
+  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html"
+}
+
+variable "cloudfront_response_headers_policy_id" {
+  type        = string
+  default     = null
+  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html"
+}
+
+variable "cloudfront_minimum_protocol_version" {
+  type        = string
+  default     = "TLSv1.2_2021"
+  description = "TLS protocol version to use for CloudFront distribution"
+}
+
+variable "cloudfront_enable_access_logs" {
+  type        = bool
+  default     = true
+  description = "Enable v2 access logging for CloudFront distribution"
+}
+
+variable "cloudfront_create_s3_bucket" {
+  type        = bool
+  default     = true
+  description = "Whether to create S3 bucket for storing CloudFront access logs"
+}
+
+variable "cloudfront_access_logs_destination_arn" {
+  type        = string
+  default     = ""
+  description = "ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `cloudfront_create_s3_bucket` is set to false"
+}
+
+variable "cloudfront_access_logs_format" {
+  type        = string
+  default     = "json"
+  description = "Format of the logs that are sent to destination"
+}
+
 variable "tileserver_domain_name" {
   type        = string
   default     = ""
