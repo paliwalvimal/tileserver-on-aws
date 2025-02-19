@@ -36,19 +36,19 @@ variable "cloudfront_http_version" {
 variable "cloudfront_cache_policy_id" {
   type        = string
   default     = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
-  description = "ID of cache policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html"
+  description = "ID of cache policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html"
 }
 
 variable "cloudfront_origin_request_policy_id" {
   type        = string
   default     = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # Managed-AllViewerExceptHostHeader
-  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html"
+  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html"
 }
 
 variable "cloudfront_response_headers_policy_id" {
   type        = string
   default     = null
-  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. Doc: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html"
+  description = "ID of response header policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html"
 }
 
 variable "cloudfront_minimum_protocol_version" {
@@ -81,6 +81,18 @@ variable "cloudfront_access_logs_format" {
   description = "Format of the logs that are sent to destination"
 }
 
+variable "cloudfront_enable_waf" {
+  type        = bool
+  default     = true
+  description = "Whether to create a WAF with default configuration and attach it to the CloudFront distribution"
+}
+
+variable "cloudfront_waf_id" {
+  type        = string
+  default     = null
+  description = "ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF"
+}
+
 variable "tileserver_domain_name" {
   type        = string
   default     = ""
@@ -102,13 +114,13 @@ variable "create_ssl_cert" {
 variable "hosted_zone_id" {
   type        = string
   default     = ""
-  description = "ID of hosted zone under which tileserver domain name needs to be registered. Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true"
+  description = "ID of hosted zone under which tileserver domain name needs to be registered. **Note:** Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true"
 }
 
 variable "tileserver_acm_cert_arn" {
   type        = string
   default     = ""
-  description = "ARN of certificate stored in ACM to use for CloudFront distribution. Only needed if `create_ssl_cert` is set to false"
+  description = "ARN of certificate stored in ACM to use for CloudFront distribution. **Note:** Only needed if `create_ssl_cert` is set to false"
 }
 
 variable "tags" {

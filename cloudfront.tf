@@ -42,7 +42,7 @@ resource "aws_cloudfront_distribution" "tileserver" {
   aliases         = [var.tileserver_domain_name]
   comment         = "Cloudfront distribution for tileserver HTTP API"
   price_class     = var.cloudfront_price_class
-  web_acl_id      = aws_wafv2_web_acl.waf_tileserver.arn
+  web_acl_id      = var.cloudfront_enable_waf ? join("", aws_wafv2_web_acl.waf_tileserver[*].arn) : var.cloudfront_waf_id
   http_version    = var.cloudfront_http_version
 
   origin {
