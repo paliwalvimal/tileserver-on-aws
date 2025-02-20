@@ -140,6 +140,18 @@ variable "apigw_vpc_link_subnet_ids" {
   description = "List of subnet IDs to create ENIs for API Gateway to interact with ECS service"
 }
 
+variable "apigw_create_lambda_authz" {
+  type        = bool
+  default     = true
+  description = "Whether to create lambda authorizer for API gateway"
+}
+
+variable "apigw_lambda_authz_subnet_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of subnet IDs to use for creating Lambda authorizer"
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

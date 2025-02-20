@@ -5,12 +5,8 @@ locals {
 resource "aws_iam_role" "apigw_logs" {
   name                  = "${local.prefix}-apigw-cwlogs"
   force_detach_policies = true
-
-  assume_role_policy = templatefile("${path.module}/iam-assume-role-policy.tftpl", {
-    service_domain = "apigateway.amazonaws.com"
-  })
-
-  tags = var.tags
+  assume_role_policy    = local.apigw_assume_role_policy
+  tags                  = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "apigw_logs" {
@@ -23,6 +19,7 @@ resource "aws_api_gateway_account" "current" {
 }
 
 resource "aws_cloudwatch_log_group" "tileserver_api_logs" {
+  # checkov:skip=CKV_AWS_338: "Log retention period is user dependent"
   name              = "/aws/apigw/${local.prefix}-tileserver"
   retention_in_days = var.cw_logs_retention_days
   kms_key_id        = var.cw_logs_kms_key_id
@@ -36,25 +33,24 @@ resource "aws_apigatewayv2_vpc_link" "tileserver" {
   tags               = var.tags
 }
 
-resource "aws_iam_role" "tileserver_apigw_authorizer" {
+resource "aws_iam_role" "tileserver_apigw_lambda_authorizer" {
+  count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-lambda"
   force_detach_policies = true
-
-  assume_role_policy = templatefile("${path.module}/iam-assume-role-policy.tftpl", {
-    service_domain = "lambda.amazonaws.com"
-  })
-
-  tags = var.tags
+  assume_role_policy    = local.lambda_assume_role_policy
+  tags                  = var.tags
 }
 
-resource "aws_iam_role_policy_attachment" "tileserver_apigw_authorizer_basic" {
-  role       = aws_iam_role.tileserver_apigw_authorizer.name
+resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_basic" {
+  count      = var.apigw_create_lambda_authz ? 1 : 0
+  role       = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
-resource "aws_iam_role_policy" "tileserver_apigw_authorizer_ssm" {
-  name = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-ssm"
-  role = aws_iam_role.tileserver_apigw_authorizer.id
+resource "aws_iam_role_policy" "tileserver_apigw_lambda_authorizer_ssm" {
+  count = var.apigw_create_lambda_authz ? 1 : 0
+  name  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-ssm"
+  role  = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].id)
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -68,30 +64,37 @@ resource "aws_iam_role_policy" "tileserver_apigw_authorizer_ssm" {
   })
 }
 
-resource "aws_cloudwatch_log_group" "tileserver_apigw_authorizer" {
-  # checkov:skip=CKV_AWS_338: "1 year retention not required"
+resource "aws_cloudwatch_log_group" "tileserver_apigw_lambda_authorizer" {
+  # checkov:skip=CKV_AWS_338: "Log retention period is user dependent"
+  count             = var.apigw_create_lambda_authz ? 1 : 0
   name              = "/aws/lambda/${local.prefix}-${local.tileserver_lambda_authorizer_name}"
   retention_in_days = var.cw_logs_retention_days
   kms_key_id        = var.cw_logs_kms_key_id
   tags              = var.tags
 }
 
-data "archive_file" "tileserver_apigw_authorizer" {
+data "archive_file" "tileserver_apigw_lambda_authorizer" {
   type        = "zip"
-  source_file = "${path.module}/tileserver_apigw_authorizer.py"
-  output_path = "${path.module}/.terraform/tileserver_apigw_authorizer.zip"
+  source_file = "${path.module}/tileserver_apigw_lambda_authorizer.py"
+  output_path = "${path.module}/.terraform/tileserver_apigw_lambda_authorizer.zip"
 }
 
-resource "aws_security_group" "tileserver_apigw_authorizer" {
+data "aws_subnet" "apigw_lambda_authz" {
+  id = var.apigw_lambda_authz_subnet_ids[0]
+}
+
+resource "aws_security_group" "tileserver_apigw_lambda_authorizer" {
+  count                  = var.apigw_create_lambda_authz ? 1 : 0
   name                   = "${local.prefix}-${local.tileserver_lambda_authorizer_name}"
-  vpc_id                 = module.vpc.id
+  vpc_id                 = data.aws_subnet.apigw_lambda_authz.vpc_id
   description            = "Security group for tileserver authorizer lambda function"
   revoke_rules_on_delete = true
   tags                   = var.tags
 }
 
-resource "aws_vpc_security_group_egress_rule" "tileserver_apigw_authorizer_https" {
-  security_group_id = aws_security_group.tileserver_apigw_authorizer.id
+resource "aws_vpc_security_group_egress_rule" "tileserver_apigw_lambda_authorizer_https" {
+  count             = var.apigw_create_lambda_authz ? 1 : 0
+  security_group_id = join("", aws_security_group.tileserver_apigw_lambda_authorizer[*].id)
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
   to_port           = 443
@@ -106,13 +109,14 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
   # checkov:skip=CKV_AWS_116: DLQ not required
   # checkov:skip=CKV_AWS_173: Encryption for env vars not required
   # checkov:skip=CKV_AWS_272: Code signing not required
+  count            = var.apigw_create_lambda_authz ? 1 : 0
   function_name    = "${local.prefix}-${local.tileserver_lambda_authorizer_name}"
   description      = "Custom authorizer function for tileserver api gateway"
-  role             = aws_iam_role.tileserver_apigw_authorizer.arn
-  filename         = data.archive_file.tileserver_apigw_authorizer.output_path
-  source_code_hash = filebase64sha256(data.archive_file.tileserver_apigw_authorizer.output_path)
+  role             = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].arn)
+  filename         = data.archive_file.tileserver_apigw_lambda_authorizer.output_path
+  source_code_hash = filebase64sha256(data.archive_file.tileserver_apigw_lambda_authorizer.output_path)
   handler          = "tileserver_apigw_authorizer.handler"
-  timeout          = 10
+  timeout          = 5
   runtime          = "python3.11"
   memory_size      = 256
   architectures    = ["arm64"]
@@ -120,14 +124,14 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
 
   environment {
     variables = {
-      tileserver_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME = local.tileserver_authz_cf_header_name
-      tileserver_AUTHZ_CF_TOKEN_SSM_PARAM_NAME     = aws_ssm_parameter.tileserver_cf_authz_token.name
+      TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME = local.tileserver_authz_cf_header_name
+      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME     = aws_ssm_parameter.tileserver_cf_authz_token.name
     }
   }
 
   vpc_config {
-    subnet_ids         = module.vpc.private_subnet_ids
-    security_group_ids = [aws_security_group.tileserver_apigw_authorizer.id]
+    subnet_ids         = var.apigw_lambda_authz_subnet_ids
+    security_group_ids = aws_security_group.tileserver_apigw_authorizer[*].id
   }
 
   depends_on = [
@@ -138,7 +142,8 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
   ]
 }
 
-resource "aws_iam_role" "tileserver_apigw_authorizer_invoke" {
+resource "aws_iam_role" "tileserver_apigw_lambda_authorizer_invoke" {
+  count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-invoke"
   force_detach_policies = true
   assume_role_policy    = local.apigw_assume_role_policy
@@ -146,8 +151,9 @@ resource "aws_iam_role" "tileserver_apigw_authorizer_invoke" {
 }
 
 resource "aws_iam_role_policy" "tileserver_apigw_authorizer_invoke" {
-  name = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-invoke"
-  role = aws_iam_role.tileserver_apigw_authorizer_invoke.id
+  count = var.apigw_create_lambda_authz ? 1 : 0
+  name  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-invoke"
+  role  = join("", aws_iam_role.tileserver_apigw_lambda_authorizer_invoke[*].id)
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -191,11 +197,11 @@ resource "aws_apigatewayv2_api" "tileserver" {
           }
         }
         "x-amazon-apigateway-any-method" = {
-          security = [
+          security = var.apigw_create_lambda_authz ? [
             {
               (local.tileserver_lambda_authorizer_name) = []
             }
-          ]
+          ] : []
           x-amazon-apigateway-integration = {
             payloadFormatVersion = "1.0"
             httpMethod           = "ANY"
@@ -207,7 +213,7 @@ resource "aws_apigatewayv2_api" "tileserver" {
         }
       }
     }
-    components = {
+    components = var.apigw_create_lambda_authz ? {
       securitySchemes = {
         (local.tileserver_lambda_authorizer_name) = {
           type                         = "apiKey"
@@ -217,15 +223,15 @@ resource "aws_apigatewayv2_api" "tileserver" {
           x-amazon-apigateway-authorizer = {
             type                           = "request"
             identitySource                 = "$request.header.Authorization, $context.httpMethod, $context.path"
-            authorizerUri                  = aws_lambda_function.tileserver_apigw_authorizer.invoke_arn
-            authorizerCredentials          = aws_iam_role.tileserver_apigw_authorizer_invoke.arn
+            authorizerUri                  = join("", aws_lambda_function.tileserver_apigw_authorizer[*].invoke_arn)
+            authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_authorizer_invoke[*].arn)
             authorizerPayloadFormatVersion = "2.0"
             authorizerResultTtlInSeconds   = 300
             enableSimpleResponses          = true
           }
         }
       }
-    }
+    } : {}
   })
 
   tags = var.tags
