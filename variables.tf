@@ -123,6 +123,23 @@ variable "tileserver_acm_cert_arn" {
   description = "ARN of certificate stored in ACM to use for CloudFront distribution. **Note:** Only needed if `create_ssl_cert` is set to false"
 }
 
+variable "cw_logs_retention_days" {
+  type        = number
+  default     = 90
+  description = "Number of days to retain the API gateway logs for"
+}
+
+variable "cw_logs_kms_key_id" {
+  type        = string
+  default     = null
+  description = "ID of KMS key to use for encrypting logs in CloudWatch"
+}
+
+variable "apigw_vpc_link_subnet_ids" {
+  type        = list(string)
+  description = "List of subnet IDs to create ENIs for API Gateway to interact with ECS service"
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}
