@@ -37,12 +37,13 @@ resource "aws_cloudfront_distribution" "tileserver" {
   # checkov:skip=CKV_AWS_305: Default root object not required
   # checkov:skip=CKV2_AWS_32: Response headers will be managed via CloudFront Functions
   # checkov:skip=CKV_AWS_86: Access logging v2 is enabled via awscc provider
+  # checkov:skip=CKV2_AWS_47: WAF association is user dependant
   enabled         = true
   is_ipv6_enabled = true
   aliases         = [var.tileserver_domain_name]
   comment         = "Cloudfront distribution for tileserver HTTP API"
   price_class     = var.cloudfront_price_class
-  web_acl_id      = var.cloudfront_enable_waf ? join("", aws_wafv2_web_acl.waf_tileserver[*].arn) : var.cloudfront_waf_id
+  web_acl_id      = var.cloudfront_enable_waf ? join("", aws_wafv2_web_acl.tileserver[*].arn) : var.cloudfront_waf_id
   http_version    = var.cloudfront_http_version
 
   origin {

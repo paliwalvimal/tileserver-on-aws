@@ -17,15 +17,6 @@ resource "aws_iam_role_policy_attachment" "apigw_logs" {
 resource "aws_api_gateway_account" "current" {
   cloudwatch_role_arn = aws_iam_role.apigw_logs.arn
 }
-
-resource "aws_cloudwatch_log_group" "tileserver_api_logs" {
-  # checkov:skip=CKV_AWS_338: "Log retention period is user dependent"
-  name              = "/aws/apigw/${local.prefix}-tileserver"
-  retention_in_days = var.cw_logs_retention_days
-  kms_key_id        = var.cw_logs_kms_key_id
-  tags              = var.tags
-}
-
 resource "aws_apigatewayv2_vpc_link" "tileserver" {
   name               = "${local.prefix}-tileserver-vpc-link"
   security_group_ids = [aws_security_group.tileserver_ecs.id]
@@ -84,6 +75,7 @@ data "aws_subnet" "apigw_lambda_authz" {
 }
 
 resource "aws_security_group" "tileserver_apigw_lambda_authorizer" {
+  # checkov:skip=CKV2_AWS_5: Security group is attached to Lambda function
   count                  = var.apigw_create_lambda_authz ? 1 : 0
   name                   = "${local.prefix}-${local.tileserver_lambda_authorizer_name}"
   vpc_id                 = data.aws_subnet.apigw_lambda_authz.vpc_id
@@ -131,14 +123,14 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
 
   vpc_config {
     subnet_ids         = var.apigw_lambda_authz_subnet_ids
-    security_group_ids = aws_security_group.tileserver_apigw_authorizer[*].id
+    security_group_ids = aws_security_group.tileserver_apigw_lambda_authorizer[*].id
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.tileserver_apigw_authorizer_basic,
+    aws_iam_role_policy_attachment.tileserver_apigw_lambda_authorizer_basic,
 
     # required to prevent lambda from automatically creating CloudWatch log group
-    aws_cloudwatch_log_group.tileserver_apigw_authorizer
+    aws_cloudwatch_log_group.tileserver_apigw_lambda_authorizer
   ]
 }
 
@@ -161,7 +153,7 @@ resource "aws_iam_role_policy" "tileserver_apigw_authorizer_invoke" {
       {
         Effect   = "Allow"
         Action   = "lambda:InvokeFunction"
-        Resource = aws_lambda_function.tileserver_apigw_authorizer.arn
+        Resource = aws_lambda_function.tileserver_apigw_authorizer[*].arn
       }
     ]
   })
@@ -235,6 +227,14 @@ resource "aws_apigatewayv2_api" "tileserver" {
   })
 
   tags = var.tags
+}
+
+resource "aws_cloudwatch_log_group" "tileserver_api_logs" {
+  # checkov:skip=CKV_AWS_338: "Log retention period is user dependent"
+  name              = "/aws/apigw/${local.prefix}-tileserver"
+  retention_in_days = var.cw_logs_retention_days
+  kms_key_id        = var.cw_logs_kms_key_id
+  tags              = var.tags
 }
 
 resource "aws_apigatewayv2_stage" "tileserver" {

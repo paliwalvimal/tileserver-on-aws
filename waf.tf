@@ -1,4 +1,6 @@
-resource "aws_wafv2_web_acl" "waf_tileserver" {
+resource "aws_wafv2_web_acl" "tileserver" {
+  # checkov:skip=CKV2_AWS_31: Logging will be managed by user
+  count       = var.cloudfront_enable_waf ? 1 : 0
   provider    = aws.use1
   name        = "${local.prefix}-tileserver-waf-acl"
   description = "WAF Web ACL for tileserver"

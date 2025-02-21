@@ -1,11 +1,11 @@
-data "aws_subnet" "apigw_lambda_authz" {
-  id = var.apigw_lambda_authz_subnet_ids[0]
+data "aws_subnet" "apigw_vpc_link" {
+  id = var.apigw_vpc_link_subnet_ids[0]
 }
 
 resource "aws_service_discovery_private_dns_namespace" "tileserver" {
   name        = "${local.prefix}-tileserver"
   description = "Namespace for tileserver service"
-  vpc         = module.vpc.id
+  vpc         = data.aws_subnet.apigw_vpc_link.vpc_id
   tags        = var.tags
 }
 
