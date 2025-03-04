@@ -152,6 +152,30 @@ variable "apigw_lambda_authz_subnet_ids" {
   description = "List of subnet IDs to use for creating Lambda authorizer"
 }
 
+variable "s3_kms_key" {
+  type        = string
+  default     = "alias/aws/s3"
+  description = "ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket"
+}
+
+variable "s3_tileserver_cf_access_logs_bucket_apply_ssl_deny_policy" {
+  type        = bool
+  default     = true
+  description = "Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy"
+}
+
+variable "ecs_enable_container_insights" {
+  type        = bool
+  default     = true
+  description = "Whether to enable container insights for ECS cluster"
+}
+
+variable "ecs_enable_guard_duty_monitoring" {
+  type        = bool
+  default     = true
+  description = "Whether to enable guard duty monitoring for ECS cluster"
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

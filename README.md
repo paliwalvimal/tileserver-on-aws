@@ -59,9 +59,13 @@ This terraform module manages the following services:
 | create_tileserver_dns_record | Whether to create DNS record for tileserver in Route53 | `bool` | `true` | no |
 | cw_logs_kms_key_id | ID of KMS key to use for encrypting logs in CloudWatch | `string` | `null` | no |
 | cw_logs_retention_days | Number of days to retain the API gateway logs for | `number` | `90` | no |
+| ecs_enable_container_insights | Whether to enable container insights for ECS cluster | `bool` | `true` | no |
+| ecs_enable_guard_duty_monitoring | Whether to enable guard duty monitoring for ECS cluster | `bool` | `true` | no |
 | env | Environment name: dev, qa, uat, staging, production | `string` | `"dev"` | no |
 | hosted_zone_id | ID of hosted zone under which tileserver domain name needs to be registered. **Note:** Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true | `string` | `""` | no |
 | region | Region where the resources will be deployed | `string` | n/a | yes |
+| s3_kms_key | ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket | `string` | `"alias/aws/s3"` | no |
+| s3_tileserver_cf_access_logs_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
 | tags | A map of key value pair to assign to resources | `map(string)` | `{}` | no |
 | tileserver_acm_cert_arn | ARN of certificate stored in ACM to use for CloudFront distribution. **Note:** Only needed if `create_ssl_cert` is set to false | `string` | `""` | no |
 | tileserver_domain_name | Domain name to associate with the CloudFront tileserver distribution | `string` | `""` | no |
