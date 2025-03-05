@@ -31,7 +31,7 @@ This terraform module manages the following services:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | apigw_create_lambda_authz | Whether to create lambda authorizer for API gateway | `bool` | `true` | no |
-| apigw_lambda_authz_subnet_ids | List of subnet IDs to use for creating Lambda authorizer | `list(string)` | `[]` | no |
+| apigw_lambda_authz_subnet_ids | List of subnet IDs to use for creating Lambda authorizer | `list(string)` | n/a | yes |
 | apigw_vpc_link_subnet_ids | List of subnet IDs to create ENIs for API Gateway to interact with ECS service | `list(string)` | n/a | yes |
 | cloudfront_access_logs_destination_arn | ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `cloudfront_create_s3_bucket` is set to false | `string` | `""` | no |
 | cloudfront_access_logs_format | Format of the logs that are sent to destination | `string` | `"json"` | no |

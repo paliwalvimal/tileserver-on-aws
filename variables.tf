@@ -148,7 +148,6 @@ variable "apigw_create_lambda_authz" {
 
 variable "apigw_lambda_authz_subnet_ids" {
   type        = list(string)
-  default     = []
   description = "List of subnet IDs to use for creating Lambda authorizer"
 }
 

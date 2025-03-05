@@ -221,7 +221,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       ],
       privileged             = false,
       readonlyRootFilesystem = true,
-      user                   = local.tileserver_nginx_tmp_efs_uid,
+      user                   = tostring(local.tileserver_nginx_tmp_efs_uid),
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -267,7 +267,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
         }
       ],
       privileged             = false,
-      user                   = local.tileserver_data_efs_uid,
+      user                   = tostring(local.tileserver_data_efs_uid),
       readonlyRootFilesystem = true,
       logConfiguration = {
         logDriver = "awslogs",
@@ -314,7 +314,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       ],
       privileged             = false,
       readonlyRootFilesystem = true,
-      user                   = local.tileserver_data_efs_uid,
+      user                   = tostring(local.tileserver_data_efs_uid),
       logConfiguration = {
         logDriver = "awslogs",
         options = {
