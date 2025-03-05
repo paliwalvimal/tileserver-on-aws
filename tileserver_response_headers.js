@@ -16,6 +16,12 @@ async function handler(event) {
     response.headers['access-control-allow-headers'] = {
         value: 'Authorization'
     };
+    response.headers['access-control-max-age'] = {
+        value: '300'
+    };
+    response.headers['vary'] = {
+        value: 'Origin'
+    };
 
     if (cors_origin_domain !== '*') {
         response.headers['access-control-allow-credentials'] = {
