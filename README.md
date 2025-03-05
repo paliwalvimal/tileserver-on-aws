@@ -1,12 +1,3 @@
-# terraform-base-template
-
-This is a template repository that will serve as a starting point for all the new terraform modules
-
-## Important changes:
-- Replace `REPO_NAME` with the actual repository name in examples directory and .tf-header.md file
-- Update module name in the examples directory
-- Add title in the .tf-header.tf file
-
 <!-- BEGIN_TF_DOCS -->
 # Host TileServer on AWS
 
@@ -16,6 +7,7 @@ This terraform module manages the following services:
 - CloudFront
 - WAF
 - CloudFront Function
+- ACM
 - HTTP API Gateway
 - Lambda Authorizer
 - VPC Private Link
