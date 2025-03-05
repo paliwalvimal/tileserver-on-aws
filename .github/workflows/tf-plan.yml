@@ -27,7 +27,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -var 'region="eu-west-1"' \
-            -var 'apigw_vpc_link_subnet_ids="[\"subnet-0effa1e57c8f69bc0\", \"subnet-0c7abf9a5ed4ef7d3\"]"' \
-            -var 'ecs_service_subnet_ids="[\"subnet-0effa1e57c8f69bc0\", \"subnet-0c7abf9a5ed4ef7d3\"]" \
-            -var 'efs_subnet_ids="[\"subnet-0effa1e57c8f69bc0\", \"subnet-0c7abf9a5ed4ef7d3\"]"'
+          terraform plan -var 'region=eu-west-1' \
+            -var 'apigw_vpc_link_subnet_ids=["subnet-0effa1e57c8f69bc0", "subnet-0c7abf9a5ed4ef7d3"]' \
+            -var 'ecs_service_subnet_ids=["subnet-0effa1e57c8f69bc0", "subnet-0c7abf9a5ed4ef7d3"] \
+            -var 'efs_subnet_ids=["subnet-0effa1e57c8f69bc0", "subnet-0c7abf9a5ed4ef7d3"]'
