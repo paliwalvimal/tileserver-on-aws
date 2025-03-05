@@ -150,8 +150,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
   cpu                = var.ecs_service_tileserver_container_cpu
   memory             = var.ecs_service_tileserver_container_memory
 
-  container_definitions = jsonencode([
-    {
+  container_definitions = jsonencode(flatten([
+    [{
       name      = "nginx-init",
       image     = var.ecs_service_nginx_init_container_image,
       cpu       = 128,
@@ -184,8 +184,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           drop = ["ALL"]
         }
       }
-    },
-    {
+    }],
+    [{
       name   = "nginx",
       image  = var.ecs_service_nginx_container_image,
       cpu    = var.ecs_service_nginx_container_cpu,
@@ -245,8 +245,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           drop = ["ALL"]
         }
       }
-    },
-    {
+    }],
+    var.create_s3_tileserver_data_bucket ? [{
       name      = "tileserver-init",
       image     = var.ecs_service_tileserver_init_container_image,
       cpu       = 128,
@@ -282,8 +282,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           drop = ["ALL"]
         }
       }
-    },
-    {
+    }] : [],
+    [{
       name   = "tileserver",
       image  = var.ecs_service_tileserver_container_image,
       cpu    = var.ecs_service_tileserver_container_cpu,
@@ -306,12 +306,12 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           readOnly      = true
         }
       ],
-      dependsOn = [
+      dependsOn = var.create_s3_tileserver_data_bucket ? [
         {
           containerName = "tileserver-init",
           condition     = "SUCCESS"
         }
-      ],
+      ] : [],
       privileged             = false,
       readonlyRootFilesystem = true,
       user                   = tostring(local.tileserver_data_efs_uid),
@@ -338,8 +338,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           drop = ["ALL"]
         }
       }
-    }
-  ])
+    }]
+  ]))
 
   volume {
     name = "tileserver-data"
