@@ -167,3 +167,68 @@ output "ecs_task_iam_role_arn" {
   value       = aws_iam_role.tileserver_ecs_task.arn
   description = "ARN of ECS task IAM role"
 }
+
+output "ecs_cluster_name" {
+  value       = aws_ecs_cluster.tileserver.name
+  description = "Name of ECS cluster"
+}
+
+output "ecs_cluster_arn" {
+  value       = aws_ecs_cluster.tileserver.arn
+  description = "ARN of ECS cluster"
+}
+
+output "ecs_task_definition_arn" {
+  value       = aws_ecs_task_definition.tileserver_fargate.arn
+  description = "ARN of ECS task definition"
+}
+
+output "ecs_task_definition_arn_without_revision" {
+  value       = aws_ecs_task_definition.tileserver_fargate.arn_without_revision
+  description = "ARN of ECS task definition without revision"
+}
+
+output "ecs_task_definition_revision" {
+  value       = aws_ecs_task_definition.tileserver_fargate.revision
+  description = "Revision of ECS task definition"
+}
+
+output "ecs_service_security_group_id" {
+  value       = aws_security_group.tileserver_ecs.id
+  description = "ID of security group attached to ECS service"
+}
+
+output "ecs_service_arn" {
+  value       = aws_ecs_service.tileserver.id
+  description = "ARN of ECS service"
+}
+
+output "efs_id" {
+  value       = aws_efs_file_system.tileserver_data.id
+  description = "ID of EFS file system"
+}
+
+output "efs_security_group_id" {
+  value       = aws_security_group.tileserver_data_efs.id
+  description = "ID of security group attached to EFS file system"
+}
+
+output "efs_tileserver_access_point_id" {
+  value       = aws_efs_access_point.tileserver_data.id
+  description = "ID of EFS access point for tileserver"
+}
+
+output "efs_tileserver_access_point_arn" {
+  value       = aws_efs_access_point.tileserver_data.arn
+  description = "ARN of EFS access point for tileserver"
+}
+
+output "efs_tileserver_nginx_tmp_access_point_id" {
+  value       = aws_efs_access_point.tileserver_nginx_tmp.id
+  description = "ID of EFS access point for nginx"
+}
+
+output "efs_tileserver_nginx_tmp_access_point_arn" {
+  value       = aws_efs_access_point.tileserver_nginx_tmp.arn
+  description = "ARN of EFS access point for nginx"
+}

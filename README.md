@@ -112,10 +112,23 @@ This terraform module manages the following services:
 | cloudfront_domain_name | Domain name assigned to CloudFront distribution |
 | cloudfront_hosted_zone_id | Hosted zone ID of CloudFront distribution |
 | cloudfront_id | ID of CloudFront distribution |
+| ecs_cluster_arn | ARN of ECS cluster |
+| ecs_cluster_name | Name of ECS cluster |
+| ecs_service_arn | ARN of ECS service |
+| ecs_service_security_group_id | ID of security group attached to ECS service |
+| ecs_task_definition_arn | ARN of ECS task definition |
+| ecs_task_definition_arn_without_revision | ARN of ECS task definition without revision |
+| ecs_task_definition_revision | Revision of ECS task definition |
 | ecs_task_execution_iam_role_arn | ARN of ECS task execution IAM role |
 | ecs_task_execution_iam_role_name | Name of ECS task execution IAM role |
 | ecs_task_iam_role_arn | ARN of ECS task IAM role |
 | ecs_task_iam_role_name | Name of ECS task IAM role |
+| efs_id | ID of EFS file system |
+| efs_security_group_id | ID of security group attached to EFS file system |
+| efs_tileserver_access_point_arn | ARN of EFS access point for tileserver |
+| efs_tileserver_access_point_id | ID of EFS access point for tileserver |
+| efs_tileserver_nginx_tmp_access_point_arn | ARN of EFS access point for nginx |
+| efs_tileserver_nginx_tmp_access_point_id | ID of EFS access point for nginx |
 | s3_bucket_arn | ARN of S3 bucket used to store CloudFront access logs |
 | s3_bucket_name | Name of S3 bucket used to store CloudFront access logs |
 | tileserver_cf_authz_token_ssm_param_arn | ARN of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |
