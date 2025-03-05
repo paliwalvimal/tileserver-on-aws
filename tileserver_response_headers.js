@@ -2,11 +2,13 @@ async function handler(event) {
     var response = event.response;
     var headers = response.headers;
 
+    var cors_origin_domain = '${cors_origin_domain}';
+
     // Set CORS headers
     // Since JavaScript doesn't allow for hyphens in variable names, we use the dict["key"] notation.
     console.log("Adding CORS headers");
     response.headers['access-control-allow-origin'] = {
-        value: '${cors_origin_domain}'
+        value: cors_origin_domain
     };
     response.headers['access-control-allow-methods'] = {
         value: 'GET, OPTIONS'
@@ -15,12 +17,12 @@ async function handler(event) {
         value: 'Authorization'
     };
 
-    if ('${cors_origin_domain}' !== '*') {
+    if (cors_origin_domain !== '*') {
         response.headers['access-control-allow-credentials'] = {
             value: 'true'
         };
     }
-    
+
     // Set HTTP security headers
     // Since JavaScript doesn't allow for hyphens in variable names, we use the dict["key"] notation
     console.log("Adding security headers");
