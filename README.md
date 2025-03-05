@@ -55,19 +55,34 @@ This terraform module manages the following services:
 | cloudfront_waf_id | ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF | `string` | `null` | no |
 | cors_origin_domain | Domain name to use for setting CORS `access-control-allow-origin` header | `string` | `"*"` | no |
 | create_cloudfront_function | Whether to associate CloudFront Function to the distribution | `bool` | `true` | no |
+| create_s3_tileserver_data_bucket | Whether to create S3 bucket for storing tileserver data like config files, mbtiles, etc | `bool` | `false` | no |
 | create_ssl_cert | Whether to create custom SSL certification for CloudFront distribution | `bool` | `true` | no |
 | create_tileserver_dns_record | Whether to create DNS record for tileserver in Route53 | `bool` | `true` | no |
 | cw_logs_kms_key_id | ID of KMS key to use for encrypting logs in CloudWatch | `string` | `null` | no |
 | cw_logs_retention_days | Number of days to retain the API gateway logs for | `number` | `90` | no |
 | ecs_enable_container_insights | Whether to enable container insights for ECS cluster | `bool` | `true` | no |
 | ecs_enable_guard_duty_monitoring | Whether to enable guard duty monitoring for ECS cluster | `bool` | `true` | no |
+| ecs_service_max_replicas | Maximum number of replicas to run for ECS service | `number` | `2` | no |
+| ecs_service_min_replicas | Minimum number of replicas to run for ECS service | `number` | `1` | no |
+| ecs_service_nginx_container_cpu | Number of CPU units to provision for nginx container | `number` | `256` | no |
+| ecs_service_nginx_container_image | Image to use for nginx container | `string` | `"nginxinc/nginx-unprivileged@sha256:65f2b40f4d9bd814f38be587d6a6a23d8d62d7a44d3b30df181fc3b10543e063"` | no |
+| ecs_service_nginx_container_memory | Amount (in MiB) of memory to provision for nginx container | `number` | `512` | no |
+| ecs_service_nginx_init_container_image | Image to use for nginx init container | `string` | `"alpine@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099"` | no |
+| ecs_service_port | Port to expose for TileServer container | `number` | `8080` | no |
+| ecs_service_subnet_ids | List of subnet IDs to create ENIs for TileServer ECS service | `list(string)` | n/a | yes |
+| ecs_service_tileserver_container_cpu | Number of CPU units to provision for TileServer container | `number` | `256` | no |
+| ecs_service_tileserver_container_image | Image to use for TileServer container | `string` | `"maptiler/tileserver-gl-light@sha256:1b3611d2fa6f322e19cb6a828e5e03121dbbcd9ac23735a7b967c73b07753152"` | no |
+| ecs_service_tileserver_container_memory | Amount (in MiB) of memory to provision for TileServer container | `number` | `512` | no |
+| ecs_service_tileserver_init_container_image | Image to use for TileServer init container | `string` | `"amazon/aws-cli@sha256:6977c83ae3dc99f28fcf8276b9ea5eec33833cd5be40574b34112e98113ec7a2"` | no |
+| efs_subnet_ids | List of subnet IDs to create mount points for EFS volume | `list(string)` | n/a | yes |
 | env | Environment name: dev, qa, uat, staging, production | `string` | `"dev"` | no |
 | hosted_zone_id | ID of hosted zone under which tileserver domain name needs to be registered. **Note:** Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true | `string` | `""` | no |
 | region | Region where the resources will be deployed | `string` | n/a | yes |
 | s3_kms_key | ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket | `string` | `"alias/aws/s3"` | no |
-| s3_tileserver_cf_access_logs_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
 | tags | A map of key value pair to assign to resources | `map(string)` | `{}` | no |
 | tileserver_acm_cert_arn | ARN of certificate stored in ACM to use for CloudFront distribution. **Note:** Only needed if `create_ssl_cert` is set to false | `string` | `""` | no |
+| tileserver_cf_access_logs_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
+| tileserver_data_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
 | tileserver_domain_name | Domain name to associate with the CloudFront tileserver distribution | `string` | `""` | no |
 
 ## Outputs
@@ -97,6 +112,10 @@ This terraform module manages the following services:
 | cloudfront_domain_name | Domain name assigned to CloudFront distribution |
 | cloudfront_hosted_zone_id | Hosted zone ID of CloudFront distribution |
 | cloudfront_id | ID of CloudFront distribution |
+| ecs_task_execution_iam_role_arn | ARN of ECS task execution IAM role |
+| ecs_task_execution_iam_role_name | Name of ECS task execution IAM role |
+| ecs_task_iam_role_arn | ARN of ECS task IAM role |
+| ecs_task_iam_role_name | Name of ECS task IAM role |
 | s3_bucket_arn | ARN of S3 bucket used to store CloudFront access logs |
 | s3_bucket_name | Name of S3 bucket used to store CloudFront access logs |
 | tileserver_cf_authz_token_ssm_param_arn | ARN of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |

@@ -216,7 +216,7 @@ resource "aws_apigatewayv2_api" "tileserver" {
             type                           = "request"
             identitySource                 = "$request.header.Authorization, $context.httpMethod, $context.path"
             authorizerUri                  = join("", aws_lambda_function.tileserver_apigw_authorizer[*].invoke_arn)
-            authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_authorizer_invoke[*].arn)
+            authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_lambda_authorizer_invoke[*].arn)
             authorizerPayloadFormatVersion = "2.0"
             authorizerResultTtlInSeconds   = 300
             enableSimpleResponses          = true

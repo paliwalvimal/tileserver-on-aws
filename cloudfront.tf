@@ -137,7 +137,7 @@ resource "awscc_logs_delivery_destination" "tileserver_cf_s3" {
 resource "awscc_logs_delivery" "tileserver_cf_s3" {
   count                    = var.cloudfront_enable_access_logs ? 1 : 0
   provider                 = awscc.use1
-  delivery_source_name     = awscc_logs_delivery_source.tileserver_cf.name
-  delivery_destination_arn = awscc_logs_delivery_destination.tileserver_cf_s3.arn
+  delivery_source_name     = join("", awscc_logs_delivery_source.tileserver_cf[*].name)
+  delivery_destination_arn = join("", awscc_logs_delivery_destination.tileserver_cf_s3[*].arn)
   tags                     = [for k, v in var.tags : { key = k, value = v }]
 }

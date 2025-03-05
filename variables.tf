@@ -158,7 +158,7 @@ variable "s3_kms_key" {
   description = "ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket"
 }
 
-variable "s3_tileserver_cf_access_logs_bucket_apply_ssl_deny_policy" {
+variable "tileserver_cf_access_logs_bucket_apply_ssl_deny_policy" {
   type        = bool
   default     = true
   description = "Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy"
@@ -174,6 +174,94 @@ variable "ecs_enable_guard_duty_monitoring" {
   type        = bool
   default     = true
   description = "Whether to enable guard duty monitoring for ECS cluster"
+}
+
+variable "create_s3_tileserver_data_bucket" {
+  type        = bool
+  default     = false
+  description = "Whether to create S3 bucket for storing tileserver data like config files, mbtiles, etc"
+}
+
+variable "tileserver_data_bucket_apply_ssl_deny_policy" {
+  type        = bool
+  default     = true
+  description = "Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy"
+}
+
+variable "efs_subnet_ids" {
+  type        = list(string)
+  description = "List of subnet IDs to create mount points for EFS volume"
+}
+
+variable "ecs_service_subnet_ids" {
+  type        = list(string)
+  description = "List of subnet IDs to create ENIs for TileServer ECS service"
+}
+
+variable "ecs_service_port" {
+  type        = number
+  default     = 8080
+  description = "Port to expose for TileServer container"
+}
+
+variable "ecs_service_min_replicas" {
+  type        = number
+  default     = 1
+  description = "Minimum number of replicas to run for ECS service"
+}
+
+variable "ecs_service_max_replicas" {
+  type        = number
+  default     = 2
+  description = "Maximum number of replicas to run for ECS service"
+}
+
+variable "ecs_service_nginx_init_container_image" {
+  type        = string
+  default     = "alpine@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099"
+  description = "Image to use for nginx init container"
+}
+
+variable "ecs_service_nginx_container_image" {
+  type        = string
+  default     = "nginxinc/nginx-unprivileged@sha256:65f2b40f4d9bd814f38be587d6a6a23d8d62d7a44d3b30df181fc3b10543e063"
+  description = "Image to use for nginx container"
+}
+
+variable "ecs_service_nginx_container_cpu" {
+  type        = number
+  default     = 256
+  description = "Number of CPU units to provision for nginx container"
+}
+
+variable "ecs_service_nginx_container_memory" {
+  type        = number
+  default     = 512
+  description = "Amount (in MiB) of memory to provision for nginx container"
+}
+
+variable "ecs_service_tileserver_init_container_image" {
+  type        = string
+  default     = "amazon/aws-cli@sha256:6977c83ae3dc99f28fcf8276b9ea5eec33833cd5be40574b34112e98113ec7a2"
+  description = "Image to use for TileServer init container"
+}
+
+variable "ecs_service_tileserver_container_image" {
+  type        = string
+  default     = "maptiler/tileserver-gl-light@sha256:1b3611d2fa6f322e19cb6a828e5e03121dbbcd9ac23735a7b967c73b07753152"
+  description = "Image to use for TileServer container"
+}
+
+variable "ecs_service_tileserver_container_cpu" {
+  type        = number
+  default     = 256
+  description = "Number of CPU units to provision for TileServer container"
+}
+
+variable "ecs_service_tileserver_container_memory" {
+  type        = number
+  default     = 512
+  description = "Amount (in MiB) of memory to provision for TileServer container"
 }
 
 variable "tags" {

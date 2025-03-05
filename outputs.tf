@@ -147,3 +147,23 @@ output "cloud_map_svc_discovery_svc_arn" {
   value       = aws_service_discovery_service.tileserver.arn
   description = "ARN of the Cloud Map service discovery service"
 }
+
+output "ecs_task_execution_iam_role_name" {
+  value       = aws_iam_role.tileserver_ecs_task_execution.name
+  description = "Name of ECS task execution IAM role"
+}
+
+output "ecs_task_execution_iam_role_arn" {
+  value       = aws_iam_role.tileserver_ecs_task_execution.arn
+  description = "ARN of ECS task execution IAM role"
+}
+
+output "ecs_task_iam_role_name" {
+  value       = aws_iam_role.tileserver_ecs_task.name
+  description = "Name of ECS task IAM role"
+}
+
+output "ecs_task_iam_role_arn" {
+  value       = aws_iam_role.tileserver_ecs_task.arn
+  description = "ARN of ECS task IAM role"
+}

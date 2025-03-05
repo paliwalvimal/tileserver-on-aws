@@ -1,4 +1,4 @@
-data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 data "aws_route53_zone" "tileserver" {
   count   = var.create_tileserver_dns_record || var.create_ssl_cert ? 1 : 0
@@ -7,6 +7,8 @@ data "aws_route53_zone" "tileserver" {
 
 locals {
   prefix = var.env
+
+  account_id = data.aws_caller_identity.current.account_id
 
   apigw_assume_role_policy = templatefile("${path.module}/iam-assume-role-policy.tftpl", {
     service_domain = "apigateway.amazonaws.com"

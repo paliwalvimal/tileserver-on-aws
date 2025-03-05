@@ -1,4 +1,4 @@
-module "maptiler_ssl" {
+module "tileserver_ssl" {
   count  = var.create_ssl_cert ? 1 : 0
   source = "github.com/terrablocks/aws-acm-ssl-certificate.git?ref=a3f12c6" # v1.0.0
 
