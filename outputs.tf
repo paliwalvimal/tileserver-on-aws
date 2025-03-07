@@ -29,12 +29,12 @@ output "cloudfront_hosted_zone_id" {
 }
 
 output "s3_bucket_name" {
-  value       = var.cloudfront_create_s3_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].name) : null
+  value       = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].name) : null
   description = "Name of S3 bucket used to store CloudFront access logs"
 }
 
 output "s3_bucket_arn" {
-  value       = var.cloudfront_create_s3_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : null
+  value       = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : null
   description = "ARN of S3 bucket used to store CloudFront access logs"
 }
 

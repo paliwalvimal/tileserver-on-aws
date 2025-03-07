@@ -122,16 +122,16 @@ resource "awscc_logs_delivery_source" "tileserver_cf" {
   name         = "${local.prefix}-tileserver-cf"
   log_type     = "ACCESS_LOGS"
   resource_arn = aws_cloudfront_distribution.tileserver.arn
-  tags         = [for k, v in var.tags : { key = k, value = v }]
+  tags         = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
 }
 
 resource "awscc_logs_delivery_destination" "tileserver_cf_s3" {
   count                    = var.cloudfront_enable_access_logs ? 1 : 0
   provider                 = awscc.use1
   name                     = "${local.prefix}-tileserver-cf-s3"
-  destination_resource_arn = var.cloudfront_create_s3_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : var.cloudfront_access_logs_destination_arn
+  destination_resource_arn = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : var.cloudfront_access_logs_destination_arn
   output_format            = var.cloudfront_access_logs_format
-  tags                     = [for k, v in var.tags : { key = k, value = v }]
+  tags                     = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
 }
 
 resource "awscc_logs_delivery" "tileserver_cf_s3" {
@@ -139,5 +139,5 @@ resource "awscc_logs_delivery" "tileserver_cf_s3" {
   provider                 = awscc.use1
   delivery_source_name     = join("", awscc_logs_delivery_source.tileserver_cf[*].name)
   delivery_destination_arn = join("", awscc_logs_delivery_destination.tileserver_cf_s3[*].arn)
-  tags                     = [for k, v in var.tags : { key = k, value = v }]
+  tags                     = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
 }

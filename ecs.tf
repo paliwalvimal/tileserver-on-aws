@@ -147,8 +147,8 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
   execution_role_arn = aws_iam_role.tileserver_ecs_task_execution.arn
   task_role_arn      = aws_iam_role.tileserver_ecs_task.arn
   network_mode       = "awsvpc"
-  cpu                = var.ecs_service_tileserver_container_cpu
-  memory             = var.ecs_service_tileserver_container_memory
+  cpu                = var.ecs_service_cpu
+  memory             = var.ecs_service_memory
 
   container_definitions = jsonencode(flatten([
     [{

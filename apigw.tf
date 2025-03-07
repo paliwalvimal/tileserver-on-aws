@@ -16,6 +16,7 @@ resource "aws_iam_role_policy_attachment" "apigw_logs" {
 
 resource "aws_api_gateway_account" "current" {
   cloudwatch_role_arn = aws_iam_role.apigw_logs.arn
+  reset_on_delete     = true
 }
 resource "aws_apigatewayv2_vpc_link" "tileserver" {
   name               = "${local.prefix}-tileserver-vpc-link"

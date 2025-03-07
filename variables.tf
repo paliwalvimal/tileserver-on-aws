@@ -63,7 +63,7 @@ variable "cloudfront_enable_access_logs" {
   description = "Enable v2 access logging for CloudFront distribution"
 }
 
-variable "cloudfront_create_s3_bucket" {
+variable "create_cloudfront_logs_bucket" {
   type        = bool
   default     = true
   description = "Whether to create S3 bucket for storing CloudFront access logs"
@@ -72,7 +72,7 @@ variable "cloudfront_create_s3_bucket" {
 variable "cloudfront_access_logs_destination_arn" {
   type        = string
   default     = ""
-  description = "ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `cloudfront_create_s3_bucket` is set to false"
+  description = "ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `create_cloudfront_logs_bucket` is set to false"
 }
 
 variable "cloudfront_access_logs_format" {
@@ -157,12 +157,6 @@ variable "s3_kms_key" {
   description = "ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket"
 }
 
-variable "tileserver_cf_access_logs_bucket_apply_ssl_deny_policy" {
-  type        = bool
-  default     = true
-  description = "Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy"
-}
-
 variable "ecs_enable_container_insights" {
   type        = bool
   default     = true
@@ -190,6 +184,18 @@ variable "tileserver_data_bucket_apply_ssl_deny_policy" {
 variable "efs_subnet_ids" {
   type        = list(string)
   description = "List of subnet IDs to create mount points for EFS volume"
+}
+
+variable "ecs_service_cpu" {
+  type        = number
+  default     = 512
+  description = "Hard limit of CPU units for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for CPU units: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size"
+}
+
+variable "ecs_service_memory" {
+  type        = number
+  default     = 1024
+  description = "Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size"
 }
 
 variable "ecs_service_subnet_ids" {

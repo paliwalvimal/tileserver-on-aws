@@ -33,10 +33,9 @@ This terraform module manages the following services:
 | apigw_create_lambda_authz | Whether to create lambda authorizer for API gateway | `bool` | `true` | no |
 | apigw_lambda_authz_subnet_ids | List of subnet IDs to use for creating Lambda authorizer | `list(string)` | n/a | yes |
 | apigw_vpc_link_subnet_ids | List of subnet IDs to create ENIs for API Gateway to interact with ECS service | `list(string)` | n/a | yes |
-| cloudfront_access_logs_destination_arn | ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `cloudfront_create_s3_bucket` is set to false | `string` | `""` | no |
+| cloudfront_access_logs_destination_arn | ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `create_cloudfront_logs_bucket` is set to false | `string` | `""` | no |
 | cloudfront_access_logs_format | Format of the logs that are sent to destination | `string` | `"json"` | no |
 | cloudfront_cache_policy_id | ID of cache policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html | `string` | `"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"` | no |
-| cloudfront_create_s3_bucket | Whether to create S3 bucket for storing CloudFront access logs | `bool` | `true` | no |
 | cloudfront_enable_access_logs | Enable v2 access logging for CloudFront distribution | `bool` | `true` | no |
 | cloudfront_enable_waf | Whether to create a WAF with default configuration and attach it to the CloudFront distribution | `bool` | `true` | no |
 | cloudfront_http_version | HTTP version to use for CloudFront distribution | `string` | `"http2"` | no |
@@ -47,6 +46,7 @@ This terraform module manages the following services:
 | cloudfront_waf_id | ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF | `string` | `null` | no |
 | cors_origin_domain | Domain name to use for setting CORS `access-control-allow-origin` header | `string` | `"*"` | no |
 | create_cloudfront_function | Whether to associate CloudFront Function to the distribution | `bool` | `true` | no |
+| create_cloudfront_logs_bucket | Whether to create S3 bucket for storing CloudFront access logs | `bool` | `true` | no |
 | create_s3_tileserver_data_bucket | Whether to create S3 bucket for storing tileserver data like config files, mbtiles, etc | `bool` | `false` | no |
 | create_ssl_cert | Whether to create custom SSL certification for CloudFront distribution | `bool` | `true` | no |
 | create_tileserver_dns_record | Whether to create DNS record for tileserver in Route53 | `bool` | `true` | no |
@@ -54,7 +54,9 @@ This terraform module manages the following services:
 | cw_logs_retention_days | Number of days to retain the API gateway logs for | `number` | `90` | no |
 | ecs_enable_container_insights | Whether to enable container insights for ECS cluster | `bool` | `true` | no |
 | ecs_enable_guard_duty_monitoring | Whether to enable guard duty monitoring for ECS cluster | `bool` | `true` | no |
+| ecs_service_cpu | Hard limit of CPU units for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for CPU units: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `512` | no |
 | ecs_service_max_replicas | Maximum number of replicas to run for ECS service | `number` | `2` | no |
+| ecs_service_memory | Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `1024` | no |
 | ecs_service_min_replicas | Minimum number of replicas to run for ECS service | `number` | `1` | no |
 | ecs_service_nginx_container_cpu | Number of CPU units to provision for nginx container | `number` | `256` | no |
 | ecs_service_nginx_container_image | Image to use for nginx container | `string` | `"nginxinc/nginx-unprivileged@sha256:65f2b40f4d9bd814f38be587d6a6a23d8d62d7a44d3b30df181fc3b10543e063"` | no |
@@ -73,7 +75,6 @@ This terraform module manages the following services:
 | s3_kms_key | ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket | `string` | `"alias/aws/s3"` | no |
 | tags | A map of key value pair to assign to resources | `map(string)` | `{}` | no |
 | tileserver_acm_cert_arn | ARN of certificate stored in ACM to use for CloudFront distribution. **Note:** Only needed if `create_ssl_cert` is set to false | `string` | `""` | no |
-| tileserver_cf_access_logs_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
 | tileserver_data_bucket_apply_ssl_deny_policy | Apply the [default SSL deny policy](https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html#example-bucket-policies-HTTP-HTTPS) to the S3 bucket. **Note:** Set this to false if you want to attach your own policy | `bool` | `true` | no |
 | tileserver_domain_name | Domain name to associate with the CloudFront tileserver distribution | `string` | `""` | no |
 
