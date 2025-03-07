@@ -3,7 +3,7 @@ data "aws_kms_key" "s3" {
 }
 
 module "tileserver_cf_access_logs_bucket" {
-  source = "github.com/terrablocks/aws-s3-bucket.git?ref=cace8fe" # v1.1.1
+  source = "github.com/terrablocks/aws-s3-bucket.git?ref=db66f89" # v1.1.2
 
   count                 = var.create_cloudfront_logs_bucket ? 1 : 0
   name                  = "${local.prefix}-tileserver-cf-access-logs"
@@ -65,7 +65,7 @@ resource "aws_s3_bucket_policy" "tileserver_cf_access_logs" {
 }
 
 module "tileserver_data_bucket" {
-  source = "github.com/terrablocks/aws-s3-bucket.git?ref=cace8fe" # v1.1.1
+  source = "github.com/terrablocks/aws-s3-bucket.git?ref=db66f89" # v1.1.2
 
   count                 = var.create_s3_tileserver_data_bucket ? 1 : 0
   name                  = "${local.prefix}-tileserver-data"

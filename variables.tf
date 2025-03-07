@@ -188,13 +188,13 @@ variable "efs_subnet_ids" {
 
 variable "ecs_service_cpu" {
   type        = number
-  default     = 512
+  default     = 1024
   description = "Hard limit of CPU units for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for CPU units: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size"
 }
 
 variable "ecs_service_memory" {
   type        = number
-  default     = 1024
+  default     = 2048
   description = "Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size"
 }
 

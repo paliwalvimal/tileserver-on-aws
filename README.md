@@ -54,9 +54,9 @@ This terraform module manages the following services:
 | cw_logs_retention_days | Number of days to retain the API gateway logs for | `number` | `90` | no |
 | ecs_enable_container_insights | Whether to enable container insights for ECS cluster | `bool` | `true` | no |
 | ecs_enable_guard_duty_monitoring | Whether to enable guard duty monitoring for ECS cluster | `bool` | `true` | no |
-| ecs_service_cpu | Hard limit of CPU units for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for CPU units: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `512` | no |
+| ecs_service_cpu | Hard limit of CPU units for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for CPU units: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `1024` | no |
 | ecs_service_max_replicas | Maximum number of replicas to run for ECS service | `number` | `2` | no |
-| ecs_service_memory | Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `1024` | no |
+| ecs_service_memory | Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `2048` | no |
 | ecs_service_min_replicas | Minimum number of replicas to run for ECS service | `number` | `1` | no |
 | ecs_service_nginx_container_cpu | Number of CPU units to provision for nginx container | `number` | `256` | no |
 | ecs_service_nginx_container_image | Image to use for nginx container | `string` | `"nginxinc/nginx-unprivileged@sha256:65f2b40f4d9bd814f38be587d6a6a23d8d62d7a44d3b30df181fc3b10543e063"` | no |
