@@ -28,14 +28,29 @@ output "cloudfront_hosted_zone_id" {
   description = "Hosted zone ID of CloudFront distribution"
 }
 
-output "s3_bucket_name" {
+output "cloudfront_ssl_cert_arn" {
+  value       = var.create_ssl_cert ? join("", module.tileserver_ssl[*].arn) : var.tileserver_acm_cert_arn
+  description = "ARN of SSL certificate attached to the CLoudFront distribution"
+}
+
+output "tileserver_cf_access_logs_bucket_name" {
   value       = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].name) : null
   description = "Name of S3 bucket used to store CloudFront access logs"
 }
 
-output "s3_bucket_arn" {
+output "tileserver_cf_access_logs_bucket_arn" {
   value       = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : null
   description = "ARN of S3 bucket used to store CloudFront access logs"
+}
+
+output "tileserver_data_bucket_name" {
+  value       = var.create_s3_tileserver_data_bucket ? join("", module.tileserver_data_bucket[*].name) : null
+  description = "Name of S3 bucket used to store TileServer config data"
+}
+
+output "tileserver_data_bucket_arn" {
+  value       = var.create_s3_tileserver_data_bucket ? join("", module.tileserver_data_bucket[*].arn) : null
+  description = "ARN of S3 bucket used to store TileServer config data"
 }
 
 output "waf_arn" {
@@ -178,6 +193,11 @@ output "ecs_cluster_arn" {
   description = "ARN of ECS cluster"
 }
 
+output "ecs_task_definition_family" {
+  value       = aws_ecs_task_definition.tileserver_fargate.family
+  description = "Family name of ECS task definition"
+}
+
 output "ecs_task_definition_arn" {
   value       = aws_ecs_task_definition.tileserver_fargate.arn
   description = "ARN of ECS task definition"
@@ -196,6 +216,11 @@ output "ecs_task_definition_revision" {
 output "ecs_service_security_group_id" {
   value       = aws_security_group.tileserver_ecs.id
   description = "ID of security group attached to ECS service"
+}
+
+output "ecs_service_name" {
+  value       = aws_ecs_service.tileserver.name
+  description = "Name of ECS service"
 }
 
 output "ecs_service_arn" {
@@ -231,4 +256,9 @@ output "efs_tileserver_nginx_tmp_access_point_id" {
 output "efs_tileserver_nginx_tmp_access_point_arn" {
   value       = aws_efs_access_point.tileserver_nginx_tmp.arn
   description = "ARN of EFS access point for nginx"
+}
+
+output "tileserver_domain_name" {
+  value       = var.create_tileserver_dns_record ? join("", aws_route53_record.tileserver[*].name) : null
+  description = "Domain name record created to expose TileServer"
 }

@@ -105,12 +105,15 @@ This terraform module manages the following services:
 | cloudfront_domain_name | Domain name assigned to CloudFront distribution |
 | cloudfront_hosted_zone_id | Hosted zone ID of CloudFront distribution |
 | cloudfront_id | ID of CloudFront distribution |
+| cloudfront_ssl_cert_arn | ARN of SSL certificate attached to the CLoudFront distribution |
 | ecs_cluster_arn | ARN of ECS cluster |
 | ecs_cluster_name | Name of ECS cluster |
 | ecs_service_arn | ARN of ECS service |
+| ecs_service_name | Name of ECS service |
 | ecs_service_security_group_id | ID of security group attached to ECS service |
 | ecs_task_definition_arn | ARN of ECS task definition |
 | ecs_task_definition_arn_without_revision | ARN of ECS task definition without revision |
+| ecs_task_definition_family | Family name of ECS task definition |
 | ecs_task_definition_revision | Revision of ECS task definition |
 | ecs_task_execution_iam_role_arn | ARN of ECS task execution IAM role |
 | ecs_task_execution_iam_role_name | Name of ECS task execution IAM role |
@@ -122,10 +125,13 @@ This terraform module manages the following services:
 | efs_tileserver_access_point_id | ID of EFS access point for tileserver |
 | efs_tileserver_nginx_tmp_access_point_arn | ARN of EFS access point for nginx |
 | efs_tileserver_nginx_tmp_access_point_id | ID of EFS access point for nginx |
-| s3_bucket_arn | ARN of S3 bucket used to store CloudFront access logs |
-| s3_bucket_name | Name of S3 bucket used to store CloudFront access logs |
+| tileserver_cf_access_logs_bucket_arn | ARN of S3 bucket used to store CloudFront access logs |
+| tileserver_cf_access_logs_bucket_name | Name of S3 bucket used to store CloudFront access logs |
 | tileserver_cf_authz_token_ssm_param_arn | ARN of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |
 | tileserver_cf_authz_token_ssm_param_name | Name of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |
+| tileserver_data_bucket_arn | ARN of S3 bucket used to store TileServer config data |
+| tileserver_data_bucket_name | Name of S3 bucket used to store TileServer config data |
+| tileserver_domain_name | Domain name record created to expose TileServer |
 | waf_arn | ARN of WAF associated to CloudFront distribution |
 | waf_id | ID of WAF associated to CloudFront distribution |
 | waf_name | Name of WAF associated to CloudFront distribution |
