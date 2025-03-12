@@ -152,16 +152,18 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
 
   container_definitions = jsonencode(flatten([
     [{
-      name      = "nginx-init",
-      image     = var.ecs_service_nginx_init_container_image,
-      cpu       = 128,
-      memory    = 256,
-      essential = false,
+      name         = "nginx-init",
+      image        = var.ecs_service_nginx_init_container_image,
+      cpu          = 128,
+      memory       = 256,
+      portMappings = [],
+      essential    = false,
       command = [
         "sh",
         "-c",
         "echo ${local.nginx_config_base64} | base64 -d | tee /etc/nginx/nginx.conf"
       ],
+      environment = [],
       mountPoints = [
         {
           sourceVolume  = "nginx-conf",
@@ -169,6 +171,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           readOnly      = false
         }
       ],
+      volumesFrom            = [],
       privileged             = false,
       readonlyRootFilesystem = true,
       logConfiguration = {
@@ -182,8 +185,10 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       linuxParameters = {
         capabilities = {
           drop = ["ALL"]
+          add  = []
         }
-      }
+      },
+      systemControls = []
     }],
     [{
       name   = "nginx",
@@ -193,10 +198,12 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       portMappings = [
         {
           containerPort = var.ecs_service_port,
+          hostPort      = var.ecs_service_port,
           protocol      = "tcp"
         }
       ],
-      essential = true,
+      essential   = true,
+      environment = [],
       mountPoints = [
         {
           sourceVolume  = "nginx-conf",
@@ -209,6 +216,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           readOnly      = false
         }
       ],
+      volumesFrom = [],
       dependsOn = [
         {
           containerName = "nginx-init",
@@ -243,15 +251,18 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       linuxParameters = {
         capabilities = {
           drop = ["ALL"]
+          add  = []
         }
-      }
+      },
+      systemControls = []
     }],
     var.create_s3_tileserver_data_bucket ? [{
-      name      = "tileserver-init",
-      image     = var.ecs_service_tileserver_init_container_image,
-      cpu       = 128,
-      memory    = 256,
-      essential = false,
+      name         = "tileserver-init",
+      image        = var.ecs_service_tileserver_init_container_image,
+      cpu          = 128,
+      memory       = 256,
+      portMappings = [],
+      essential    = false,
       command = [
         "s3",
         "sync",
@@ -259,6 +270,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
         "s3://${join("", module.tileserver_data_bucket[*].name)}/",
         "/data"
       ],
+      environment = [],
       mountPoints = [
         {
           sourceVolume  = "tileserver-data",
@@ -266,6 +278,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           readOnly      = false
         }
       ],
+      volumesFrom            = [],
       privileged             = false,
       user                   = tostring(local.tileserver_data_efs_uid),
       readonlyRootFilesystem = true,
@@ -280,8 +293,10 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       linuxParameters = {
         capabilities = {
           drop = ["ALL"]
+          add  = []
         }
-      }
+      },
+      systemControls = []
     }] : [],
     [{
       name   = "tileserver",
@@ -291,6 +306,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       portMappings = [
         {
           containerPort = local.tileserver_container_port,
+          hostPort      = local.tileserver_container_port,
           protocol      = "tcp"
         }
       ],
@@ -299,6 +315,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
         "--port",
         tostring(local.tileserver_container_port)
       ],
+      environment = [],
       mountPoints = [
         {
           sourceVolume  = "tileserver-data",
@@ -308,6 +325,7 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
           readOnly = var.create_s3_tileserver_data_bucket
         }
       ],
+      volumesFrom = [],
       dependsOn = var.create_s3_tileserver_data_bucket ? [
         {
           containerName = "tileserver-init",
@@ -338,8 +356,10 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
       linuxParameters = {
         capabilities = {
           drop = ["ALL"]
+          add  = []
         }
-      }
+      },
+      systemControls = []
     }]
   ]))
 
@@ -431,6 +451,10 @@ resource "aws_ecs_service" "tileserver" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    aws_efs_mount_target.tileserver_data
+  ]
 
   lifecycle {
     ignore_changes = [

@@ -108,7 +108,7 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
   role             = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].arn)
   filename         = data.archive_file.tileserver_apigw_lambda_authorizer.output_path
   source_code_hash = filebase64sha256(data.archive_file.tileserver_apigw_lambda_authorizer.output_path)
-  handler          = "tileserver_apigw_authorizer.handler"
+  handler          = "tileserver_apigw_lambda_authorizer.handler"
   timeout          = 5
   runtime          = "python3.11"
   memory_size      = 256
@@ -215,7 +215,7 @@ resource "aws_apigatewayv2_api" "tileserver" {
           x-amazon-apigateway-authtype = "custom"
           x-amazon-apigateway-authorizer = {
             type                           = "request"
-            identitySource                 = "$request.header.Authorization, $context.httpMethod, $context.path"
+            identitySource                 = "$context.httpMethod, $context.path"
             authorizerUri                  = join("", aws_lambda_function.tileserver_apigw_authorizer[*].invoke_arn)
             authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_lambda_authorizer_invoke[*].arn)
             authorizerPayloadFormatVersion = "2.0"

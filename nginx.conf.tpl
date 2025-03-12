@@ -45,9 +45,10 @@ http {
 
         # ref: https://tileserver.readthedocs.io/en/latest/deployment.html#nginx-reverse-proxy
         # Disable root application access. You may want to allow this in development.
-        location ~ ^/$ {
-            return 404;
-        }
+        # uncomment below code block if required
+        # location ~ ^/$ {
+        #     return 404;
+        # }
 
         location /ping {
             access_log    off;

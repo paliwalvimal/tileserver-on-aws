@@ -11,7 +11,15 @@ resource "aws_wafv2_web_acl" "tileserver" {
   }
 
   default_action {
-    block {}
+    dynamic "allow" {
+      for_each = var.cors_origin_domain == "*" ? [0] : []
+      content {}
+    }
+
+    dynamic "block" {
+      for_each = var.cors_origin_domain == "*" ? [] : [0]
+      content {}
+    }
   }
 
   rule {
