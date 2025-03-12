@@ -320,9 +320,9 @@ resource "aws_ecs_task_definition" "tileserver_fargate" {
         {
           sourceVolume  = "tileserver-data",
           containerPath = local.tileserver_data_mount_path,
-          # readonly needs to be true if we are not syncing data from S3, this is because
-          # when mbtiles file is not present, tileserver will download the default mbtiles file
-          readOnly = var.create_s3_tileserver_data_bucket
+          # readonly is set to false because during the initial run if mbtiles is not present,
+          # tileserver will download the default mbtiles file
+          readOnly = false
         }
       ],
       volumesFrom = [],
