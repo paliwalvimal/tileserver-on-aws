@@ -10,11 +10,11 @@ repos:
   - id: detect-private-key
   - id: no-commit-to-branch
 - repo: https://github.com/gitleaks/gitleaks
-  rev: v8.23.3
+  rev: v8.24.2
   hooks:
     - id: gitleaks
 - repo: https://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.97.3
+  rev: v1.98.0
   hooks:
     - id: terraform_fmt
     - id: terraform_validate
@@ -24,7 +24,7 @@ repos:
       args:
         - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl --fix
 - repo: https://github.com/bridgecrewio/checkov.git
-  rev: "3.2.370"
+  rev: "3.2.396"
   hooks:
     - id: checkov
       args: ["--quiet", "--compact", "--framework", "terraform", "--download-external-modules", "false", "--skip-path", "examples"]
