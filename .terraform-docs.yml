@@ -17,6 +17,12 @@ sections:
 content: |-
   {{ .Header }}
 
+  # Usage Instructions
+  ## Example
+  ```hcl
+  {{ include "examples/default.tf" }}
+  ```
+
   {{ .Requirements }}
 
   {{ .Inputs }}

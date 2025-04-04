@@ -240,25 +240,25 @@ output "efs_security_group_id" {
 
 output "efs_tileserver_access_point_id" {
   value       = aws_efs_access_point.tileserver_data.id
-  description = "ID of EFS access point for tileserver"
+  description = "ID of EFS access point for tileserver container"
 }
 
 output "efs_tileserver_access_point_arn" {
   value       = aws_efs_access_point.tileserver_data.arn
-  description = "ARN of EFS access point for tileserver"
+  description = "ARN of EFS access point for tileserver container"
 }
 
 output "efs_tileserver_nginx_tmp_access_point_id" {
   value       = aws_efs_access_point.tileserver_nginx_tmp.id
-  description = "ID of EFS access point for nginx"
+  description = "ID of EFS access point for nginx container"
 }
 
 output "efs_tileserver_nginx_tmp_access_point_arn" {
   value       = aws_efs_access_point.tileserver_nginx_tmp.arn
-  description = "ARN of EFS access point for nginx"
+  description = "ARN of EFS access point for nginx container"
 }
 
 output "tileserver_domain_name" {
   value       = var.create_tileserver_dns_record ? join("", aws_route53_record.tileserver[*].name) : null
-  description = "Domain name record created to expose TileServer"
+  description = "Domain name record created to access TileServer"
 }

@@ -16,6 +16,22 @@ This terraform module manages the following services:
 - S3
 - EFS
 
+# Usage Instructions
+## Example
+```hcl
+module "tileserver" {
+  source = "github.com/paliwalvimal/tileserver-on-aws.git?ref=" # Always use `ref` to point module to a specific version or hash
+
+  region                        = "eu-west-1"
+  apigw_vpc_link_subnet_ids     = ["sub-xxxxxx", "sub-xxxxxx"]
+  apigw_lambda_authz_subnet_ids = ["sub-xxxxxx", "sub-xxxxxx"]
+  ecs_service_subnet_ids        = ["sub-xxxxxx", "sub-xxxxxx"]
+  efs_subnet_ids                = ["sub-xxxxxx", "sub-xxxxxx"]
+  tileserver_domain_name        = "tileserver.example.com"
+  hosted_zone_id                = "Z000000000000000"
+}
+```
+
 ## Requirements
 
 | Name | Version |
@@ -121,17 +137,17 @@ This terraform module manages the following services:
 | ecs_task_iam_role_name | Name of ECS task IAM role |
 | efs_id | ID of EFS file system |
 | efs_security_group_id | ID of security group attached to EFS file system |
-| efs_tileserver_access_point_arn | ARN of EFS access point for tileserver |
-| efs_tileserver_access_point_id | ID of EFS access point for tileserver |
-| efs_tileserver_nginx_tmp_access_point_arn | ARN of EFS access point for nginx |
-| efs_tileserver_nginx_tmp_access_point_id | ID of EFS access point for nginx |
+| efs_tileserver_access_point_arn | ARN of EFS access point for tileserver container |
+| efs_tileserver_access_point_id | ID of EFS access point for tileserver container |
+| efs_tileserver_nginx_tmp_access_point_arn | ARN of EFS access point for nginx container |
+| efs_tileserver_nginx_tmp_access_point_id | ID of EFS access point for nginx container |
 | tileserver_cf_access_logs_bucket_arn | ARN of S3 bucket used to store CloudFront access logs |
 | tileserver_cf_access_logs_bucket_name | Name of S3 bucket used to store CloudFront access logs |
 | tileserver_cf_authz_token_ssm_param_arn | ARN of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |
 | tileserver_cf_authz_token_ssm_param_name | Name of SSM parameter used for storing authZ token shared between CloudFront and API Gateway |
 | tileserver_data_bucket_arn | ARN of S3 bucket used to store TileServer config data |
 | tileserver_data_bucket_name | Name of S3 bucket used to store TileServer config data |
-| tileserver_domain_name | Domain name record created to expose TileServer |
+| tileserver_domain_name | Domain name record created to access TileServer |
 | waf_arn | ARN of WAF associated to CloudFront distribution |
 | waf_id | ID of WAF associated to CloudFront distribution |
 | waf_name | Name of WAF associated to CloudFront distribution |
