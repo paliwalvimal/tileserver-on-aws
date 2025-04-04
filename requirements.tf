@@ -3,7 +3,33 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.0.0"
+      version = ">= 5.13.0"
+    }
+    awscc = {
+      source  = "hashicorp/awscc"
+      version = ">= 1.26.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">= 3.6.3"
+    }
+    archive = {
+      source  = "hashicorp/archive"
+      version = ">= 2.4.0"
     }
   }
+}
+
+provider "aws" {
+  region = var.region
+}
+
+provider "aws" {
+  alias  = "use1"
+  region = "us-east-1"
+}
+
+provider "awscc" {
+  alias  = "use1"
+  region = "us-east-1"
 }
