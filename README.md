@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Host TileServer on AWS
 
-![License](https://img.shields.io/github/license/terrablocks/tileserver-on-aws?style=for-the-badge) ![Plan](https://img.shields.io/github/actions/workflow/status/terrablocks/tileserver-on-aws/tf-plan.yml?branch=main&label=Plan&style=for-the-badge) ![Checkov](https://img.shields.io/github/actions/workflow/status/terrablocks/tileserver-on-aws/checkov.yml?branch=main&label=Checkov&style=for-the-badge) ![Commit](https://img.shields.io/github/last-commit/terrablocks/tileserver-on-aws?style=for-the-badge) ![Release](https://img.shields.io/github/v/release/terrablocks/tileserver-on-aws?style=for-the-badge)
+![License](https://img.shields.io/github/license/paliwalvimal/tileserver-on-aws?style=for-the-badge) ![Plan](https://img.shields.io/github/actions/workflow/status/paliwalvimal/tileserver-on-aws/tf-plan.yml?branch=main&label=Plan&style=for-the-badge) ![Checkov](https://img.shields.io/github/actions/workflow/status/paliwalvimal/tileserver-on-aws/checkov.yml?branch=main&label=Checkov&style=for-the-badge) ![Commit](https://img.shields.io/github/last-commit/paliwalvimal/tileserver-on-aws?style=for-the-badge) ![Release](https://img.shields.io/github/v/release/paliwalvimal/tileserver-on-aws?style=for-the-badge)
 
 This terraform module manages the following services:
 - CloudFront
