@@ -5,6 +5,7 @@ locals {
 resource "aws_iam_role" "apigw_logs" {
   name                  = "${local.prefix}-apigw-cwlogs"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.apigw_assume_role_policy
   tags                  = var.tags
 }
@@ -16,8 +17,8 @@ resource "aws_iam_role_policy_attachment" "apigw_logs" {
 
 resource "aws_api_gateway_account" "current" {
   cloudwatch_role_arn = aws_iam_role.apigw_logs.arn
-  reset_on_delete     = true
 }
+
 resource "aws_apigatewayv2_vpc_link" "tileserver" {
   name               = "${local.prefix}-tileserver-vpc-link"
   security_group_ids = [aws_security_group.tileserver_ecs.id]
@@ -29,6 +30,7 @@ resource "aws_iam_role" "tileserver_apigw_lambda_authorizer" {
   count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-lambda"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.lambda_assume_role_policy
   tags                  = var.tags
 }
@@ -139,6 +141,7 @@ resource "aws_iam_role" "tileserver_apigw_lambda_authorizer_invoke" {
   count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-invoke"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.apigw_assume_role_policy
   tags                  = var.tags
 }

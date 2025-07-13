@@ -8,10 +8,11 @@ resource "aws_cloudwatch_log_group" "tileserver_ecs_logs" {
 
 # IAM role for tileserver ECS task execution
 resource "aws_iam_role" "tileserver_ecs_task_execution" {
-  name                 = "${local.prefix}-tileserver-ecs-task-execution"
-  max_session_duration = 21600 # 6 hours
-  assume_role_policy   = local.ecs_tasks_assume_role_policy
-  tags                 = var.tags
+  name                  = "${local.prefix}-tileserver-ecs-task-execution"
+  force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
+  assume_role_policy    = local.ecs_tasks_assume_role_policy
+  tags                  = var.tags
 }
 
 resource "aws_iam_role_policy" "tileserver_ecs_task_execution" {
@@ -37,8 +38,9 @@ resource "aws_iam_role_policy" "tileserver_ecs_task_execution" {
 
 # IAM role for tileserver ECS task role
 resource "aws_iam_role" "tileserver_ecs_task" {
-  name                 = "${local.prefix}-tileserver-ecs-task"
-  max_session_duration = 21600 # 6 hours
+  name                  = "${local.prefix}-tileserver-ecs-task"
+  force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",

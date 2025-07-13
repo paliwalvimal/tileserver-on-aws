@@ -16,9 +16,15 @@ TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME = os.environ.get("TILESERVER_AUTHZ_CF_T
 
 ssm = boto3.client("ssm", region_name=os.environ.get("AWS_REGION"))
 
-def fetch_ssm_param(parameter_name):
+def fetch_ssm_param(parameter_name: str) -> str:
     '''
     Get the parameter value from AWS SSM
+
+    Args:
+        parameter_name: Name of the SSM parameter to fetch
+
+    Returns:
+        str: Value of the SSM parameter
     '''
     logger.info("Getting parameter value from SSM: %s", parameter_name)
     response = ssm.get_parameter(
@@ -27,9 +33,15 @@ def fetch_ssm_param(parameter_name):
     )
     return response["Parameter"]["Value"]
 
-def is_authorized(event):
+def is_authorized(event: dict) -> bool:
     '''
     Authorize the request based on the custom header value received from cloudfront
+
+    Args:
+        event: Event received from the API Gateway
+
+    Returns:
+        bool: True if the request is authorized, False otherwise
     '''
     # validating the custom authz token
     try:
@@ -48,10 +60,27 @@ def is_authorized(event):
 
     return True
 
-def handler(event, context):
+def handler(event: dict, context: dict) -> dict:
     '''
     Entry point for the lambda function
+
+    Args:
+        event: Event received from the API Gateway
+        context: Context received from the API Gateway
+
+    Returns:
+        dict: Response from the lambda function
     '''
+
+    if (TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
+        or TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is None
+    ):
+        logger.error("TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME or \
+                      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is not set")
+        return {
+            "isAuthorized": False
+        }
+
     return {
         "isAuthorized": is_authorized(event)
     }
