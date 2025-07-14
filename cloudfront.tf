@@ -24,12 +24,11 @@ resource "random_password" "tileserver_cf_authz_token" {
 
 resource "aws_ssm_parameter" "tileserver_cf_authz_token" {
   # checkov:skip=CKV_AWS_337: CMK encryption not required
-  name             = "/secret/cloudfront/${local.tileserver_authz_cf_header_name}"
-  description      = "AuthZ token for cloudfront custom header that is passed to tileserver lambda authorizer"
-  type             = "SecureString"
-  value_wo         = random_password.tileserver_cf_authz_token.result
-  value_wo_version = 1
-  tags             = var.tags
+  name        = "/secret/cloudfront/${local.tileserver_authz_cf_header_name}"
+  description = "AuthZ token for cloudfront custom header that is passed to tileserver lambda authorizer"
+  type        = "SecureString"
+  value       = random_password.tileserver_cf_authz_token.result
+  tags        = var.tags
 }
 
 resource "aws_cloudfront_distribution" "tileserver" {
