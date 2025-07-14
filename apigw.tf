@@ -41,6 +41,12 @@ resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_ba
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_xray" {
+  count      = var.apigw_create_lambda_authz && var.apigw_lambda_tracing_mode == "Active" ? 1 : 0
+  role       = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].name)
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
+}
+
 resource "aws_iam_role_policy" "tileserver_apigw_lambda_authorizer_ssm" {
   count = var.apigw_create_lambda_authz ? 1 : 0
   name  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-ssm"
@@ -127,6 +133,10 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
   vpc_config {
     subnet_ids         = var.apigw_lambda_authz_subnet_ids
     security_group_ids = aws_security_group.tileserver_apigw_lambda_authorizer[*].id
+  }
+
+  tracing_config {
+    mode = var.apigw_lambda_tracing_mode
   }
 
   depends_on = [

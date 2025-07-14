@@ -151,6 +151,12 @@ variable "apigw_lambda_authz_subnet_ids" {
   description = "List of subnet IDs to use for creating Lambda authorizer"
 }
 
+variable "apigw_lambda_tracing_mode" {
+  type        = string
+  default     = "Active"
+  description = "Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active"
+}
+
 variable "s3_kms_key" {
   type        = string
   default     = "alias/aws/s3"

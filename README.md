@@ -47,6 +47,7 @@ module "tileserver" {
 |------|-------------|------|---------|:--------:|
 | apigw_create_lambda_authz | Whether to create lambda authorizer for API gateway | `bool` | `true` | no |
 | apigw_lambda_authz_subnet_ids | List of subnet IDs to use for creating Lambda authorizer | `list(string)` | n/a | yes |
+| apigw_lambda_tracing_mode | Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active | `string` | `"Active"` | no |
 | apigw_vpc_link_subnet_ids | List of subnet IDs to create ENIs for API Gateway to interact with ECS service | `list(string)` | n/a | yes |
 | cloudfront_access_logs_destination_arn | ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `create_cloudfront_logs_bucket` is set to false | `string` | `""` | no |
 | cloudfront_access_logs_format | Format of the logs that are sent to destination | `string` | `"json"` | no |
