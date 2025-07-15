@@ -13,8 +13,9 @@ logger.setLevel(logging.INFO)
 
 TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME = os.environ.get("TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME", None)
 TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME = os.environ.get("TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME", None)
+REGION_NAME = os.environ.get("AWS_REGION", None)
 
-ssm = boto3.client("ssm", region_name=os.environ.get("AWS_REGION"))
+ssm = boto3.client("ssm", region_name=REGION_NAME)
 
 def fetch_ssm_param(parameter_name: str) -> str:
     '''
@@ -54,8 +55,31 @@ def is_authorized(event: dict) -> bool:
             return False
 
         logger.info("Custom authz token match")
+    except IndexError:
+        logger.error("Custom authz token not found in the request headers")
+        return False
     except Exception as ex:
         logger.error("Error validating the custom authz token. Reason: %s", ex)
+        return False
+
+    return True
+
+def validate_request(event: dict) -> bool:
+    '''
+    Validate the request
+    '''
+
+    if (TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
+        or TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is None
+    ):
+        logger.error("TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME or \
+                      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is not set")
+        return False
+
+    if ("headers" in event and "host" in event["headers"] and
+        event["headers"]["host"].endswith(f".execute-api.{REGION_NAME}.amazonaws.com")
+    ):
+        logger.error("Direct access via API gateway is not allowed")
         return False
 
     return True
@@ -72,11 +96,7 @@ def handler(event: dict, context: dict) -> dict:
         dict: Response from the lambda function
     '''
 
-    if (TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
-        or TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is None
-    ):
-        logger.error("TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME or \
-                      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is not set")
+    if not validate_request(event):
         return {
             "isAuthorized": False
         }
