@@ -74,37 +74,6 @@ def is_authorized(event: dict) -> bool:
     return True
 
 
-def validate_request(event: dict) -> bool:
-    """Validate the incoming request.
-
-    Args:
-        event: Event received from the API Gateway
-
-    Returns:
-        bool: True if the request is valid, False otherwise
-
-    """
-    if (
-        TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
-        or TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is None
-    ):
-        logger.error(
-            "TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME or \
-                      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is not set",
-        )
-        return False
-
-    if (
-        "headers" in event
-        and "host" in event["headers"]
-        and event["headers"]["host"].endswith(f".execute-api.{REGION_NAME}.amazonaws.com")
-    ):
-        logger.error("Direct access via API gateway is not allowed")
-        return False
-
-    return True
-
-
 def handler(event: dict, context: dict) -> dict:
     """Entry point for the lambda function.
 
@@ -116,7 +85,14 @@ def handler(event: dict, context: dict) -> dict:
         dict: Response from the lambda function
 
     """
-    if not validate_request(event):
+    if (
+        TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
+        or TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is None
+    ):
+        logger.error(
+            "TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME or \
+                      TILESERVER_AUTHZ_CF_TOKEN_SSM_PARAM_NAME is not set",
+        )
         return {
             "isAuthorized": False,
         }

@@ -228,11 +228,9 @@ resource "aws_apigatewayv2_api" "tileserver" {
           x-amazon-apigateway-authtype = "custom"
           x-amazon-apigateway-authorizer = {
             type                           = "request"
-            identitySource                 = "$context.httpMethod, $context.path"
             authorizerUri                  = join("", aws_lambda_function.tileserver_apigw_authorizer[*].invoke_arn)
             authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_lambda_authorizer_invoke[*].arn)
             authorizerPayloadFormatVersion = "2.0"
-            authorizerResultTtlInSeconds   = 300
             enableSimpleResponses          = true
           }
         }
