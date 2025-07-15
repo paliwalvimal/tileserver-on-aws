@@ -66,7 +66,13 @@ def is_authorized(event: dict) -> bool:
 
 def validate_request(event: dict) -> bool:
     '''
-    Validate the request
+    Validate the incoming request
+
+    Args:
+        event: Event received from the API Gateway
+
+    Returns:
+        bool: True if the request is valid, False otherwise
     '''
 
     if (TILESERVER_AUTHZ_CF_TOKEN_CUSTOM_HEADER_NAME is None
