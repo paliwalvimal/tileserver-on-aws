@@ -16,6 +16,10 @@ This terraform module manages the following services:
 - S3
 - EFS
 
+## Architecture Diagram
+
+![Architecture Diagram](diagram/tileserver.jpg)
+
 # Usage Instructions
 ## Example
 ```hcl
@@ -87,7 +91,7 @@ module "tileserver" {
 | efs_subnet_ids | List of subnet IDs to create mount points for EFS volume | `list(string)` | n/a | yes |
 | env | Environment name: dev, qa, uat, staging, production | `string` | `"dev"` | no |
 | hosted_zone_id | ID of hosted zone under which tileserver domain name needs to be registered. **Note:** Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true | `string` | `""` | no |
-| iam_role_max_session_duration | Maximum session duration for IAM role. If not provided, the default value of 3600 seconds (1 hour) is applied | `number` | `null` | no |
+| iam_role_max_session_duration | Maximum session duration for IAM role. If not provided, the default value of 3600 seconds (1 hour) is applied by AWS | `number` | `null` | no |
 | region | Region where the resources will be deployed | `string` | n/a | yes |
 | s3_kms_key | ARN/Alias/ID of KMS key to use for encrypting objects stored in S3 bucket | `string` | `"alias/aws/s3"` | no |
 | tags | A map of key value pair to assign to resources | `map(string)` | `{}` | no |

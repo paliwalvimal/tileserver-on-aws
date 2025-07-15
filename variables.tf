@@ -278,7 +278,7 @@ variable "ecs_service_tileserver_container_memory" {
 variable "iam_role_max_session_duration" {
   type        = number
   default     = null
-  description = "Maximum session duration for IAM role. If not provided, the default value of 3600 seconds (1 hour) is applied"
+  description = "Maximum session duration for IAM role. If not provided, the default value of 3600 seconds (1 hour) is applied by AWS"
 }
 
 variable "tags" {
