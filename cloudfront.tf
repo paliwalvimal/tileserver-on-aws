@@ -113,31 +113,32 @@ resource "aws_route53_record" "tileserver" {
   }
 }
 
-# using awscc provider because as of writing this, terraform aws provider
-# does not fully support cloudfront logging v2 due to a bug
-# ref: https://github.com/hashicorp/terraform-provider-aws/issues/40885
-resource "awscc_logs_delivery_source" "tileserver_cf" {
+resource "aws_cloudwatch_log_delivery_source" "tileserver_cf" {
   count        = var.cloudfront_enable_access_logs ? 1 : 0
-  provider     = awscc.use1
+  provider     = aws.use1
   name         = "${local.prefix}-tileserver-cf"
   log_type     = "ACCESS_LOGS"
   resource_arn = aws_cloudfront_distribution.tileserver.arn
-  tags         = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
+  tags         = var.tags
 }
 
-resource "awscc_logs_delivery_destination" "tileserver_cf_s3" {
-  count                    = var.cloudfront_enable_access_logs ? 1 : 0
-  provider                 = awscc.use1
-  name                     = "${local.prefix}-tileserver-cf-s3"
-  destination_resource_arn = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : var.cloudfront_access_logs_destination_arn
-  output_format            = var.cloudfront_access_logs_format
-  tags                     = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
+resource "aws_cloudwatch_log_delivery_destination" "tileserver_cf_s3" {
+  count    = var.cloudfront_enable_access_logs ? 1 : 0
+  provider = aws.use1
+  name     = "${local.prefix}-tileserver-cf-s3"
+
+  delivery_destination_configuration {
+    destination_resource_arn = var.create_cloudfront_logs_bucket ? join("", module.tileserver_cf_access_logs_bucket[*].arn) : var.cloudfront_access_logs_destination_arn
+  }
+
+  output_format = var.cloudfront_access_logs_format
+  tags          = var.tags
 }
 
-resource "awscc_logs_delivery" "tileserver_cf_s3" {
+resource "aws_cloudwatch_log_delivery" "tileserver_cf_s3" {
   count                    = var.cloudfront_enable_access_logs ? 1 : 0
-  provider                 = awscc.use1
-  delivery_source_name     = join("", awscc_logs_delivery_source.tileserver_cf[*].name)
-  delivery_destination_arn = join("", awscc_logs_delivery_destination.tileserver_cf_s3[*].arn)
-  tags                     = length(var.tags) > 0 ? [for k, v in var.tags : { key = k, value = v }] : null
+  provider                 = aws.use1
+  delivery_source_name     = join("", aws_cloudwatch_log_delivery_source.tileserver_cf[*].name)
+  delivery_destination_arn = join("", aws_cloudwatch_log_delivery_destination.tileserver_cf_s3[*].arn)
+  tags                     = var.tags
 }

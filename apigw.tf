@@ -5,6 +5,7 @@ locals {
 resource "aws_iam_role" "apigw_logs" {
   name                  = "${local.prefix}-apigw-cwlogs"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.apigw_assume_role_policy
   tags                  = var.tags
 }
@@ -16,8 +17,8 @@ resource "aws_iam_role_policy_attachment" "apigw_logs" {
 
 resource "aws_api_gateway_account" "current" {
   cloudwatch_role_arn = aws_iam_role.apigw_logs.arn
-  reset_on_delete     = true
 }
+
 resource "aws_apigatewayv2_vpc_link" "tileserver" {
   name               = "${local.prefix}-tileserver-vpc-link"
   security_group_ids = [aws_security_group.tileserver_ecs.id]
@@ -29,6 +30,7 @@ resource "aws_iam_role" "tileserver_apigw_lambda_authorizer" {
   count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-lambda"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.lambda_assume_role_policy
   tags                  = var.tags
 }
@@ -37,6 +39,12 @@ resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_ba
   count      = var.apigw_create_lambda_authz ? 1 : 0
   role       = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_xray" {
+  count      = var.apigw_create_lambda_authz && var.apigw_lambda_authz_tracing_mode == "Active" ? 1 : 0
+  role       = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].name)
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
 resource "aws_iam_role_policy" "tileserver_apigw_lambda_authorizer_ssm" {
@@ -127,6 +135,10 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
     security_group_ids = aws_security_group.tileserver_apigw_lambda_authorizer[*].id
   }
 
+  tracing_config {
+    mode = var.apigw_lambda_authz_tracing_mode
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.tileserver_apigw_lambda_authorizer_basic,
 
@@ -139,6 +151,7 @@ resource "aws_iam_role" "tileserver_apigw_lambda_authorizer_invoke" {
   count                 = var.apigw_create_lambda_authz ? 1 : 0
   name                  = "${local.prefix}-${local.tileserver_lambda_authorizer_name}-invoke"
   force_detach_policies = true
+  max_session_duration  = var.iam_role_max_session_duration
   assume_role_policy    = local.apigw_assume_role_policy
   tags                  = var.tags
 }
@@ -215,11 +228,9 @@ resource "aws_apigatewayv2_api" "tileserver" {
           x-amazon-apigateway-authtype = "custom"
           x-amazon-apigateway-authorizer = {
             type                           = "request"
-            identitySource                 = "$context.httpMethod, $context.path"
             authorizerUri                  = join("", aws_lambda_function.tileserver_apigw_authorizer[*].invoke_arn)
             authorizerCredentials          = join("", aws_iam_role.tileserver_apigw_lambda_authorizer_invoke[*].arn)
             authorizerPayloadFormatVersion = "2.0"
-            authorizerResultTtlInSeconds   = 300
             enableSimpleResponses          = true
           }
         }

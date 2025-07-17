@@ -56,7 +56,7 @@ resource "aws_s3_bucket_policy" "tileserver_cf_access_logs" {
             "s3:x-amz-acl"      = "bucket-owner-full-control"
           }
           ArnLike = {
-            "aws:SourceArn" = "arn:aws:logs:us-east-1:${local.account_id}:delivery-source:${join("", awscc_logs_delivery_source.tileserver_cf[*].name)}"
+            "aws:SourceArn" = "arn:aws:logs:us-east-1:${local.account_id}:delivery-source:${join("", aws_cloudwatch_log_delivery_source.tileserver_cf[*].name)}"
           }
         }
       }

@@ -29,7 +29,7 @@ variable "cloudfront_price_class" {
 
 variable "cloudfront_http_version" {
   type        = string
-  default     = "http2"
+  default     = "http2and3"
   description = "HTTP version to use for CloudFront distribution"
 }
 
@@ -54,7 +54,7 @@ variable "cloudfront_response_headers_policy_id" {
 variable "cloudfront_minimum_protocol_version" {
   type        = string
   default     = "TLSv1.2_2021"
-  description = "TLS protocol version to use for CloudFront distribution"
+  description = "TLS protocol version to use for CloudFront distribution. For all supported versions, refer to [AWS doc](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html)"
 }
 
 variable "cloudfront_enable_access_logs" {
@@ -90,7 +90,7 @@ variable "cloudfront_enable_waf" {
 variable "cloudfront_waf_id" {
   type        = string
   default     = null
-  description = "ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF"
+  description = "ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate a self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use a self-managed WAF"
 }
 
 variable "tileserver_domain_name" {
@@ -149,6 +149,12 @@ variable "apigw_create_lambda_authz" {
 variable "apigw_lambda_authz_subnet_ids" {
   type        = list(string)
   description = "List of subnet IDs to use for creating Lambda authorizer"
+}
+
+variable "apigw_lambda_authz_tracing_mode" {
+  type        = string
+  default     = "Active"
+  description = "Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active"
 }
 
 variable "s3_kms_key" {
@@ -223,13 +229,13 @@ variable "ecs_service_max_replicas" {
 
 variable "ecs_service_nginx_init_container_image" {
   type        = string
-  default     = "alpine@sha256:56fa17d2a7e7f168a043a2712e63aed1f8543aeafdcee47c58dcffe38ed51099"
+  default     = "alpine@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715" # v3.22.0
   description = "Image to use for nginx init container"
 }
 
 variable "ecs_service_nginx_container_image" {
   type        = string
-  default     = "nginxinc/nginx-unprivileged@sha256:65f2b40f4d9bd814f38be587d6a6a23d8d62d7a44d3b30df181fc3b10543e063"
+  default     = "nginxinc/nginx-unprivileged@sha256:5906f7b44fb9f54737bd57252fd2d7779b23dd5235243e7f9fd6c22e197853d4" # v1.29-perl
   description = "Image to use for nginx container"
 }
 
@@ -247,13 +253,13 @@ variable "ecs_service_nginx_container_memory" {
 
 variable "ecs_service_tileserver_init_container_image" {
   type        = string
-  default     = "amazon/aws-cli@sha256:6977c83ae3dc99f28fcf8276b9ea5eec33833cd5be40574b34112e98113ec7a2"
+  default     = "amazon/aws-cli@sha256:48c3d4212e2f5b0e24bdc6af7708f9412ce65425a79575e0f78b8f8c0dcd70ab" # v2.27.50
   description = "Image to use for TileServer init container"
 }
 
 variable "ecs_service_tileserver_container_image" {
   type        = string
-  default     = "maptiler/tileserver-gl-light@sha256:1b3611d2fa6f322e19cb6a828e5e03121dbbcd9ac23735a7b967c73b07753152"
+  default     = "maptiler/tileserver-gl-light@sha256:a7ac7824ecb497c8971dd9c284416e96cd1c7e21e86a693fc82a37912670cd84" # v5.3.1
   description = "Image to use for TileServer container"
 }
 
@@ -267,6 +273,12 @@ variable "ecs_service_tileserver_container_memory" {
   type        = number
   default     = 512
   description = "Amount (in MiB) of memory to provision for TileServer container"
+}
+
+variable "iam_role_max_session_duration" {
+  type        = number
+  default     = null
+  description = "Maximum session duration for IAM role. If not provided, the default value of 3600 seconds (1 hour) is applied by AWS"
 }
 
 variable "tags" {

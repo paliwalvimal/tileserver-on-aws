@@ -1,5 +1,5 @@
 resource "aws_efs_file_system" "tileserver_data" {
-  # checkov:skip=CKV_AWS_184: CMK encryption is not required
+  # checkov:skip=CKV_AWS_184: CMK encryption can be enabled by user
   # checkov:skip=CKV2_AWS_18: Backup can be enabled by user
   creation_token   = "${local.prefix}-tileserver-data"
   encrypted        = true
