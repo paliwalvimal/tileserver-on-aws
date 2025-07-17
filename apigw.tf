@@ -42,7 +42,7 @@ resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_ba
 }
 
 resource "aws_iam_role_policy_attachment" "tileserver_apigw_lambda_authorizer_xray" {
-  count      = var.apigw_create_lambda_authz && var.apigw_lambda_tracing_mode == "Active" ? 1 : 0
+  count      = var.apigw_create_lambda_authz && var.apigw_lambda_authz_tracing_mode == "Active" ? 1 : 0
   role       = join("", aws_iam_role.tileserver_apigw_lambda_authorizer[*].name)
   policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
@@ -136,7 +136,7 @@ resource "aws_lambda_function" "tileserver_apigw_authorizer" {
   }
 
   tracing_config {
-    mode = var.apigw_lambda_tracing_mode
+    mode = var.apigw_lambda_authz_tracing_mode
   }
 
   depends_on = [

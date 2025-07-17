@@ -51,19 +51,19 @@ module "tileserver" {
 |------|-------------|------|---------|:--------:|
 | apigw_create_lambda_authz | Whether to create lambda authorizer for API gateway | `bool` | `true` | no |
 | apigw_lambda_authz_subnet_ids | List of subnet IDs to use for creating Lambda authorizer | `list(string)` | n/a | yes |
-| apigw_lambda_tracing_mode | Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active | `string` | `"Active"` | no |
+| apigw_lambda_authz_tracing_mode | Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active | `string` | `"Active"` | no |
 | apigw_vpc_link_subnet_ids | List of subnet IDs to create ENIs for API Gateway to interact with ECS service | `list(string)` | n/a | yes |
 | cloudfront_access_logs_destination_arn | ARN of destination to deliver the access logs to. Supported destinations are: S3, CloudWatch Logs, Kinesis Firehose. **Note:** Required only if `create_cloudfront_logs_bucket` is set to false | `string` | `""` | no |
 | cloudfront_access_logs_format | Format of the logs that are sent to destination | `string` | `"json"` | no |
 | cloudfront_cache_policy_id | ID of cache policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html | `string` | `"4135ea2d-6df8-44a3-9df3-4b5a84be39ad"` | no |
 | cloudfront_enable_access_logs | Enable v2 access logging for CloudFront distribution | `bool` | `true` | no |
 | cloudfront_enable_waf | Whether to create a WAF with default configuration and attach it to the CloudFront distribution | `bool` | `true` | no |
-| cloudfront_http_version | HTTP version to use for CloudFront distribution | `string` | `"http2"` | no |
-| cloudfront_minimum_protocol_version | TLS protocol version to use for CloudFront distribution | `string` | `"TLSv1.2_2021"` | no |
+| cloudfront_http_version | HTTP version to use for CloudFront distribution | `string` | `"http2and3"` | no |
+| cloudfront_minimum_protocol_version | TLS protocol version to use for CloudFront distribution. For all supported versions, refer to [AWS doc](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html) | `string` | `"TLSv1.2_2021"` | no |
 | cloudfront_origin_request_policy_id | ID of response header policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html | `string` | `"b689b0a8-53d0-40ab-baf2-68738e2966ac"` | no |
 | cloudfront_price_class | Price class to use for CloudFront distribution | `string` | `"PriceClass_All"` | no |
 | cloudfront_response_headers_policy_id | ID of response header policy to associate with the default behaviour of cloudfront distribution. **Doc:** https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html | `string` | `null` | no |
-| cloudfront_waf_id | ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF | `string` | `null` | no |
+| cloudfront_waf_id | ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate a self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use a self-managed WAF | `string` | `null` | no |
 | cors_origin_domain | Domain name to use for setting CORS `access-control-allow-origin` header | `string` | `"*"` | no |
 | create_cloudfront_function | Whether to associate CloudFront Function to the distribution | `bool` | `true` | no |
 | create_cloudfront_logs_bucket | Whether to create S3 bucket for storing CloudFront access logs | `bool` | `true` | no |

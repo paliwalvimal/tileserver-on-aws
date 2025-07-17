@@ -29,7 +29,7 @@ variable "cloudfront_price_class" {
 
 variable "cloudfront_http_version" {
   type        = string
-  default     = "http2"
+  default     = "http2and3"
   description = "HTTP version to use for CloudFront distribution"
 }
 
@@ -54,7 +54,7 @@ variable "cloudfront_response_headers_policy_id" {
 variable "cloudfront_minimum_protocol_version" {
   type        = string
   default     = "TLSv1.2_2021"
-  description = "TLS protocol version to use for CloudFront distribution"
+  description = "TLS protocol version to use for CloudFront distribution. For all supported versions, refer to [AWS doc](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html)"
 }
 
 variable "cloudfront_enable_access_logs" {
@@ -90,7 +90,7 @@ variable "cloudfront_enable_waf" {
 variable "cloudfront_waf_id" {
   type        = string
   default     = null
-  description = "ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use self-managed WAF"
+  description = "ID of WAF to associate with the CloudFront distribution. **Note:** Required only if you want to associate a self-managed WAF. Make sure to set `cloudfront_enable_waf` to false to use a self-managed WAF"
 }
 
 variable "tileserver_domain_name" {
@@ -151,7 +151,7 @@ variable "apigw_lambda_authz_subnet_ids" {
   description = "List of subnet IDs to use for creating Lambda authorizer"
 }
 
-variable "apigw_lambda_tracing_mode" {
+variable "apigw_lambda_authz_tracing_mode" {
   type        = string
   default     = "Active"
   description = "Tracing mode to use for Lambda authorizer. Valid values: PassThrough, Active"
