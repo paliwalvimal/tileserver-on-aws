@@ -229,13 +229,13 @@ variable "ecs_service_max_replicas" {
 
 variable "ecs_service_nginx_init_container_image" {
   type        = string
-  default     = "alpine@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715" # v3.22.0
+  default     = "mirror.gcr.io/alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1" # v3.22.1
   description = "Image to use for nginx init container"
 }
 
 variable "ecs_service_nginx_container_image" {
   type        = string
-  default     = "nginxinc/nginx-unprivileged@sha256:5906f7b44fb9f54737bd57252fd2d7779b23dd5235243e7f9fd6c22e197853d4" # v1.29-perl
+  default     = "mirror.gcr.io/nginxinc/nginx-unprivileged@sha256:705969795f0ccff6b15aefac9028641cbb71f48b175491eebb995b77f1e75ec7" # alpine3.22-perl
   description = "Image to use for nginx container"
 }
 
@@ -253,13 +253,13 @@ variable "ecs_service_nginx_container_memory" {
 
 variable "ecs_service_tileserver_init_container_image" {
   type        = string
-  default     = "amazon/aws-cli@sha256:48c3d4212e2f5b0e24bdc6af7708f9412ce65425a79575e0f78b8f8c0dcd70ab" # v2.27.50
+  default     = "mirror.gcr.io/amazon/aws-cli@sha256:5ee59dfb0f032cdc00ef175940be5cc1c3dd4621ccc27fb3cfcfd43d5b7d90e9" # v2.27.57
   description = "Image to use for TileServer init container"
 }
 
 variable "ecs_service_tileserver_container_image" {
   type        = string
-  default     = "maptiler/tileserver-gl-light@sha256:a7ac7824ecb497c8971dd9c284416e96cd1c7e21e86a693fc82a37912670cd84" # v5.3.1
+  default     = "mirror.gcr.io/maptiler/tileserver-gl-light@sha256:a7ac7824ecb497c8971dd9c284416e96cd1c7e21e86a693fc82a37912670cd84" # v5.3.1
   description = "Image to use for TileServer container"
 }
 

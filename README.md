@@ -101,15 +101,15 @@ module "tileserver" {
 | ecs_service_memory | Hard limit of memory for the ECS service. This should be enough to run both nginx and TileServer containers. Valid values for memory: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#task_size | `number` | `2048` | no |
 | ecs_service_min_replicas | Minimum number of replicas to run for ECS service | `number` | `1` | no |
 | ecs_service_nginx_container_cpu | Number of CPU units to provision for nginx container | `number` | `256` | no |
-| ecs_service_nginx_container_image | Image to use for nginx container | `string` | `"nginxinc/nginx-unprivileged@sha256:5906f7b44fb9f54737bd57252fd2d7779b23dd5235243e7f9fd6c22e197853d4"` | no |
+| ecs_service_nginx_container_image | Image to use for nginx container | `string` | `"mirror.gcr.io/nginxinc/nginx-unprivileged@sha256:705969795f0ccff6b15aefac9028641cbb71f48b175491eebb995b77f1e75ec7"` | no |
 | ecs_service_nginx_container_memory | Amount (in MiB) of memory to provision for nginx container | `number` | `512` | no |
-| ecs_service_nginx_init_container_image | Image to use for nginx init container | `string` | `"alpine@sha256:8a1f59ffb675680d47db6337b49d22281a139e9d709335b492be023728e11715"` | no |
+| ecs_service_nginx_init_container_image | Image to use for nginx init container | `string` | `"mirror.gcr.io/alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1"` | no |
 | ecs_service_port | Port to expose for TileServer container | `number` | `8080` | no |
 | ecs_service_subnet_ids | List of subnet IDs to create ENIs for TileServer ECS service | `list(string)` | n/a | yes |
 | ecs_service_tileserver_container_cpu | Number of CPU units to provision for TileServer container | `number` | `256` | no |
-| ecs_service_tileserver_container_image | Image to use for TileServer container | `string` | `"maptiler/tileserver-gl-light@sha256:a7ac7824ecb497c8971dd9c284416e96cd1c7e21e86a693fc82a37912670cd84"` | no |
+| ecs_service_tileserver_container_image | Image to use for TileServer container | `string` | `"mirror.gcr.io/maptiler/tileserver-gl-light@sha256:a7ac7824ecb497c8971dd9c284416e96cd1c7e21e86a693fc82a37912670cd84"` | no |
 | ecs_service_tileserver_container_memory | Amount (in MiB) of memory to provision for TileServer container | `number` | `512` | no |
-| ecs_service_tileserver_init_container_image | Image to use for TileServer init container | `string` | `"amazon/aws-cli@sha256:48c3d4212e2f5b0e24bdc6af7708f9412ce65425a79575e0f78b8f8c0dcd70ab"` | no |
+| ecs_service_tileserver_init_container_image | Image to use for TileServer init container | `string` | `"mirror.gcr.io/amazon/aws-cli@sha256:5ee59dfb0f032cdc00ef175940be5cc1c3dd4621ccc27fb3cfcfd43d5b7d90e9"` | no |
 | efs_subnet_ids | List of subnet IDs to create mount points for EFS volume | `list(string)` | n/a | yes |
 | env | Environment name: dev, qa, uat, staging, production | `string` | `"dev"` | no |
 | hosted_zone_id | ID of hosted zone under which tileserver domain name needs to be registered. **Note:** Required only if either of `create_tileserver_dns_record` or `create_ssl_cert` is set to true | `string` | `""` | no |
